@@ -14,35 +14,7 @@ export const ingredientsData = {
     lemon_juice: { pricePerGram: 30, caloriesPerGram: 0.3 },
     coconut_milk: { pricePerGram: 25, caloriesPerGram: 2.3 },
     egg_yolk: { pricePerGram: 28, caloriesPerGram: 3.2 },
-    sago_flour: { pricePerGram: 12, caloriesPerGram: 3.5 }
-};
-
-import nastarIcon from "./assets/nastar-icon.png";
-import kastengelIcon from "./assets/kastengel-icon.png";
-import kompiesIcon from "./assets/kompies-icon.png";
-import putriIcon from "./assets/putri-icon.png";
-import saguIcon from "./assets/sagu-icon.png";
-
-export const recipeIcons = {
-    nastar: nastarIcon,
-    kastengel: kastengelIcon,
-    kompies: kompiesIcon,
-    putri: putriIcon,
-    sagu: saguIcon,
-};
-
-import nastar from "./assets/nastar.jpg";
-import kastengel from "./assets/kastengel.jpg";
-import sagu from "./assets/sagu.jpg";
-import putri from "./assets/putri.jpg";
-import kompies from "./assets/kompies.jpg";
-
-export const recipeImages = {
-    nastar,
-    kastengel,
-    sagu,
-    putri,
-    kompies,
+    sago_flour: { pricePerGram: 12, caloriesPerGram: 3.5 },
 };
 
 export const recipes = {
@@ -55,17 +27,28 @@ export const recipes = {
             { name: "powdered_sugar", amount: 100 },
             { name: "cornstarch", amount: 100 },
             { name: "milk_powder", amount: 100 },
-            { name: "egg_yolk", amount: 5 * 18 }
+            { name: "egg_yolk", amount: 5 * 18 },
         ],
-        steps: [
-            "Cream butter, wisman, and powdered sugar until smooth",
-            "Add egg yolks and mix well",
-            "Add flour, cornstarch, and milk powder gradually",
-            "Mix until soft dough forms",
-            "Shape dough and fill with pineapple jam",
-            "Arrange on baking tray",
-            "Bake at 150°C for 25–30 minutes until golden"
-        ]
+        steps: {
+            en: [
+                "Cream butter, wisman, and powdered sugar until smooth",
+                "Add egg yolks and mix well",
+                "Add flour, cornstarch, and milk powder gradually",
+                "Mix until soft dough forms",
+                "Shape dough and fill with pineapple jam",
+                "Arrange on baking tray",
+                "Bake at 150°C for 25-30 minutes until golden",
+            ],
+            id: [
+                "Kocok mentega, wisman, dan gula halus hingga lembut",
+                "Masukkan kuning telur, aduk rata",
+                "Tambahkan tepung, maizena, dan susu bubuk secara bertahap",
+                "Uleni hingga adonan lembut dan bisa dibentuk",
+                "Bentuk bulat, isi dengan selai nanas, bulatkan kembali",
+                "Susun di loyang yang sudah diolesi mentega",
+                "Panggang 150°C selama 25-30 menit hingga keemasan",
+            ],
+        },
     },
 
     kastengel: {
@@ -76,18 +59,30 @@ export const recipes = {
             { name: "butter", amount: 300 },
             { name: "cheese_edam", amount: 200 },
             { name: "cheese_cheddar", amount: 150 },
-            { name: "egg_yolk", amount: 4 * 18 }
+            { name: "egg_yolk", amount: 4 * 18 },
         ],
-        steps: [
-            "Cream butter, wisman, and egg yolks",
-            "Add grated cheese and mix evenly",
-            "Add flour and cornstarch gradually",
-            "Mix into firm dough",
-            "Roll and flatten the dough",
-            "Cut into stick shapes",
-            "Brush with egg yolk and sprinkle cheese",
-            "Bake at 150°C for 25 minutes"
-        ]
+        steps: {
+            en: [
+                "Beat butter, wisman, and egg yolks until combined",
+                "Add grated cheese and mix evenly",
+                "Add flour and cornstarch gradually",
+                "Knead until a firm, shapeable dough forms",
+                "Roll dough to about 1 cm thickness",
+                "Cut into stick shapes",
+                "Brush with egg yolk and sprinkle grated cheese",
+                "Bake at 150°C for 25 minutes",
+            ],
+            id: [
+                "Kocok mentega, wisman, dan kuning telur hingga rata",
+                "Masukkan keju parut, aduk merata",
+                "Tambahkan tepung dan maizena secara bertahap",
+                "Uleni hingga adonan padat dan bisa dibentuk",
+                "Gilas adonan dengan ketebalan sekitar 1 cm",
+                "Potong memanjang seperti batang",
+                "Olesi dengan kuning telur dan taburi keju parut",
+                "Panggang 150°C selama 25 menit",
+            ],
+        },
     },
 
     putri: {
@@ -97,17 +92,28 @@ export const recipes = {
             { name: "butter", amount: 700 },
             { name: "powdered_sugar", amount: 150 },
             { name: "cashew", amount: 300 },
-            { name: "egg_yolk", amount: 4 * 18 }
+            { name: "egg_yolk", amount: 4 * 18 },
         ],
-        steps: [
-            "Cream butter, wisman, and powdered sugar",
-            "Add egg yolks and mix evenly",
-            "Add flour and ground cashew gradually",
-            "Mix until dough forms",
-            "Shape into crescent or desired shape",
-            "Bake at 150°C for 25 minutes",
-            "Coat with powdered sugar while warm"
-        ]
+        steps: {
+            en: [
+                "Cream butter, wisman, and powdered sugar",
+                "Add egg yolks and mix evenly",
+                "Add flour and ground cashew nuts gradually",
+                "Knead until dough is shapeable",
+                "Shape into crescents or desired form",
+                "Bake at 150°C for 25 minutes",
+                "Coat with powdered sugar while still warm",
+            ],
+            id: [
+                "Kocok mentega, wisman, dan gula halus",
+                "Masukkan kuning telur, aduk merata",
+                "Tambahkan tepung dan kacang mete halus secara bertahap",
+                "Uleni hingga adonan bisa dibentuk",
+                "Bentuk bulan sabit atau sesuai selera",
+                "Panggang 150°C selama 25 menit",
+                "Balurkan gula halus selagi masih hangat",
+            ],
+        },
     },
 
     sagu: {
@@ -117,18 +123,30 @@ export const recipes = {
             { name: "butter", amount: 300 },
             { name: "wisman", amount: 150 },
             { name: "powdered_sugar", amount: 450 },
-            { name: "coconut_milk", amount: 65 }
+            { name: "coconut_milk", amount: 65 },
         ],
-        steps: [
-            "Roast sago flour and let it cool",
-            "Cream butter, wisman, and powdered sugar",
-            "Add coconut milk and mix well",
-            "Add cheese and mix evenly",
-            "Add sago flour gradually",
-            "Put dough into piping bag",
-            "Pipe onto baking tray",
-            "Bake at 150°C for 25–30 minutes"
-        ]
+        steps: {
+            en: [
+                "Toast sago flour until dry, then let it cool",
+                "Cream butter, wisman, and powdered sugar until pale",
+                "Add coconut milk and mix well",
+                "Add grated cheese and mix evenly",
+                "Add sago flour gradually and mix gently",
+                "Transfer dough into a piping bag",
+                "Pipe onto baking tray in desired shapes",
+                "Bake at 150°C for 25-30 minutes",
+            ],
+            id: [
+                "Sangrai tepung sagu hingga kering, dinginkan",
+                "Kocok mentega, wisman, dan gula halus hingga pucat",
+                "Masukkan santan, aduk rata",
+                "Tambahkan keju parut, aduk merata",
+                "Masukkan tepung sagu secara bertahap, uleni lembut",
+                "Masukkan adonan ke dalam piping bag",
+                "Semprotkan ke loyang sesuai selera",
+                "Panggang 150°C selama 25-30 menit",
+            ],
+        },
     },
 
     kompies: {
@@ -139,8 +157,8 @@ export const recipes = {
             { name: "cream_of_tartar", amount: 30 },
             { name: "lemon_juice", amount: 15 },
             { name: "cocoa_powder", amount: 30 },
-            { name: "egg_yolk", amount: 8 * 18 }
+            { name: "egg_yolk", amount: 8 * 18 },
         ],
-        steps: null // ⛔ ONLY THIS ONE UNDER DEVELOPMENT
-    }
+        steps: null, // 🚧 Under development
+    },
 };

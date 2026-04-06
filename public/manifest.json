@@ -1,0 +1,37 @@
+{
+  "name": "Recipe Calculator",
+  "short_name": "RecipeCalc",
+  "description": "Smart baking calculator with business insights",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fdf6ee",
+  "theme_color": "#c8783a",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["food", "utilities", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Nastar",
+      "url": "/?recipe=nastar",
+      "description": "Open Nastar recipe"
+    },
+    {
+      "name": "Kastengel",
+      "url": "/?recipe=kastengel",
+      "description": "Open Kastengel recipe"
+    }
+  ]
+}

@@ -885,3 +885,303 @@ body.dark-mode .done-banner {
 body.dark-mode .share-option.whatsapp:hover {
   background: #1a2e1a;
 }
+
+/* ─── TOP CONTROLS ────────────────────────────────────────────────────────── */
+.top-controls {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 999;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* override theme-btn to not be fixed anymore */
+.theme-btn {
+  position: static !important;
+}
+
+/* ─── LANGUAGE BUTTON ─────────────────────────────────────────────────────── */
+.lang-btn {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  color: var(--text);
+  padding: 9px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: all 0.2s;
+  letter-spacing: 0.3px;
+  margin-top: 0;
+}
+.lang-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* ─── RECIPE NOTES ────────────────────────────────────────────────────────── */
+.notes-card { margin-top: 0; }
+
+.notes-saved {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 700;
+  color: #27ae60;
+  font-family: 'Nunito', sans-serif;
+  animation: fadeIn 0.3s ease;
+}
+
+.notes-textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  background: var(--surface2);
+  color: var(--text);
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.6;
+  resize: vertical;
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+  min-height: 100px;
+}
+.notes-textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(200,120,58,0.15);
+  background: var(--surface);
+}
+.notes-textarea::placeholder {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.notes-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 6px;
+  font-style: italic;
+}
+
+/* ─── COST BREAKDOWN CHART ────────────────────────────────────────────────── */
+.chart-wrap {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.chart-donut-wrap {
+  flex-shrink: 0;
+}
+.chart-donut-wrap svg {
+  filter: drop-shadow(0 4px 12px rgba(100,60,20,0.12));
+}
+.chart-legend {
+  flex: 1;
+  min-width: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.legend-item.hovered { background: var(--surface2); }
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.legend-name { flex: 1; color: var(--text); font-weight: 600; }
+.legend-pct  { color: var(--text-muted); font-weight: 700; min-width: 34px; text-align: right; }
+.legend-cost { color: var(--primary); font-weight: 800; min-width: 60px; text-align: right; }
+
+/* ─── SELLING PRICE CALCULATOR ────────────────────────────────────────────── */
+.calc-box {
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+}
+.calc-box-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+.calc-row { margin-bottom: 10px; }
+.calc-row label {
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 6px;
+}
+.calc-slider-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.margin-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  height: 6px;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--primary), #f0aa65);
+  outline: none;
+  cursor: pointer;
+}
+.margin-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--primary);
+  cursor: pointer;
+  border: 2px solid var(--surface);
+  box-shadow: 0 2px 6px rgba(200,120,58,0.4);
+}
+.margin-pct {
+  min-width: 36px;
+  text-align: right;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--primary);
+}
+.calc-result {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.calc-result-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+.calc-result-item.highlight {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+.calc-result-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 3px;
+}
+.calc-result-val {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text);
+}
+.calc-result-val.big {
+  font-size: 17px;
+  color: var(--primary);
+}
+
+/* ─── LABEL PRINT BUTTON ──────────────────────────────────────────────────── */
+.label-btn {
+  width: 100%;
+  margin-top: 12px;
+  padding: 11px;
+  border-radius: var(--radius-sm);
+  border: 1.5px dashed var(--primary);
+  background: transparent;
+  color: var(--primary);
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.label-btn:hover {
+  background: var(--primary);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(200,120,58,0.30);
+}
+
+/* ─── LABEL MODAL ─────────────────────────────────────────────────────────── */
+.label-modal {
+  max-width: 520px;
+}
+.label-preview {
+  margin: 14px 0 6px;
+  display: flex;
+  justify-content: center;
+}
+.label-prev-inner {
+  width: 220px;
+  border: 2px solid var(--primary);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: var(--surface2);
+  font-size: 11px;
+}
+.lp-brand {
+  font-family: 'Playfair Display', serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+}
+.lp-product {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 2px 0;
+}
+.lp-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 3px 0;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+.lp-row.small { font-size: 9px; }
+.lp-price {
+  background: var(--primary);
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 800;
+}
+.lp-contact {
+  font-size: 9px;
+  color: var(--text-muted);
+  display: flex;
+  gap: 8px;
+  margin-top: 3px;
+}
+.lp-note {
+  font-size: 9px;
+  color: var(--primary);
+  font-style: italic;
+  margin-top: 3px;
+  text-align: right;
+}

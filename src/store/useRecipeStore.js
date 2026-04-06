@@ -2,34 +2,42 @@ import { create } from "zustand";
 import { calculateRecipeWithPrices } from "../utils/calculator";
 import { recipes, ingredientsData } from "../data";
 
-const load = (key, fallback) => {
+const load = (key, fallback, validator) => {
   try {
     const val = localStorage.getItem(key);
-    return val ? JSON.parse(val) : fallback;
+    if (!val) return fallback;
+    const parsed = JSON.parse(val);
+    if (validator && !validator(parsed)) return fallback;
+    return parsed;
   } catch { return fallback; }
 };
 const save = (key, val) => {
   try { localStorage.setItem(key, JSON.stringify(val)); } catch { }
 };
 
+const VALID_RECIPES = ["nastar", "kastengel", "putri", "sagu", "kompies"];
+const VALID_LANGS = ["en", "id"];
+
 export const useRecipeStore = create((set, get) => ({
 
-  // RECIPE & PORTION
-  recipe: load("recipe", "nastar"),
-  portion: load("portion", 1),
+  // ─── RECIPE & PORTION ────────────────────────────────────────────────────
+  recipe: load("recipe", "nastar", (v) => VALID_RECIPES.includes(v)),
+  portion: load("portion", 1, (v) => typeof v === "number" && v >= 1 && v <= 1000),
 
   setRecipe: (recipe) => {
+    if (!VALID_RECIPES.includes(recipe)) return;
     save("recipe", recipe);
     const saved = load(`steps-${recipe}`, []);
     set({ recipe, activeStep: 0, completedSteps: saved });
   },
   setPortion: (portion) => {
-    const val = portion > 0 ? portion : 1;
-    save("portion", val);
-    set({ portion: val });
+    const val = Number(portion);
+    if (isNaN(val) || !isFinite(val) || val < 1 || val > 1000) return;
+    save("portion", Math.floor(val));
+    set({ portion: Math.floor(val) });
   },
 
-  // STEPS
+  // ─── STEPS ───────────────────────────────────────────────────────────────
   activeStep: 0,
   completedSteps: load(`steps-${load("recipe", "nastar")}`, []),
 
@@ -43,7 +51,10 @@ export const useRecipeStore = create((set, get) => ({
       ? completedSteps.filter((i) => i !== index)
       : [...completedSteps, index];
     save(`steps-${recipe}`, updated);
-    const steps = recipes[recipe]?.steps ?? [];
+    const rawSteps = recipes[recipe]?.steps;
+    const steps = rawSteps === null ? [] :
+      Array.isArray(rawSteps?.[get().lang]) ? rawSteps[get().lang] :
+        Array.isArray(rawSteps?.en) ? rawSteps.en : [];
     const next = steps.findIndex((_, i) => !updated.includes(i));
     set({ completedSteps: updated, activeStep: next === -1 ? steps.length - 1 : next });
   },
@@ -53,11 +64,24 @@ export const useRecipeStore = create((set, get) => ({
     set({ completedSteps: [], activeStep: 0 });
   },
 
-  // EDITABLE PRICES
+  // ─── NOTES (per recipe) ──────────────────────────────────────────────────
+  getNotes: () => {
+    const { recipe } = get();
+    return load(`notes-${recipe}`, "");
+  },
+  saveNotes: (text) => {
+    const { recipe } = get();
+    save(`notes-${recipe}`, text);
+  },
+
+  // ─── EDITABLE PRICES ─────────────────────────────────────────────────────
   customPrices: load("customPrices", {}),
 
   updatePrice: (ingredient, price) => {
-    const updated = { ...get().customPrices, [ingredient]: Number(price) };
+    if (!Object.keys(ingredientsData).includes(ingredient)) return;
+    const val = Number(price);
+    if (isNaN(val) || val < 0 || val > 1_000_000) return;
+    const updated = { ...get().customPrices, [ingredient]: val };
     save("customPrices", updated);
     set({ customPrices: updated });
   },
@@ -77,14 +101,29 @@ export const useRecipeStore = create((set, get) => ({
     return result;
   },
 
-  // BUSINESS
-  sellingPrice: load("sellingPrice", 0),
-  yieldAmount: load("yieldAmount", 100),
+  // ─── BUSINESS ────────────────────────────────────────────────────────────
+  sellingPrice: load("sellingPrice", 0, (v) => typeof v === "number" && v >= 0),
+  yieldAmount: load("yieldAmount", 100, (v) => typeof v === "number" && v >= 1),
 
-  setSellingPrice: (price) => { save("sellingPrice", Number(price)); set({ sellingPrice: Number(price) }); },
-  setYieldAmount: (amount) => { save("yieldAmount", Number(amount) || 1); set({ yieldAmount: Number(amount) || 1 }); },
+  setSellingPrice: (price) => {
+    const val = Number(price);
+    if (isNaN(val) || val < 0 || val > 10_000_000) return;
+    save("sellingPrice", val); set({ sellingPrice: val });
+  },
+  setYieldAmount: (amount) => {
+    const val = Number(amount) || 1;
+    save("yieldAmount", val); set({ yieldAmount: val });
+  },
 
-  // UI
+  // ─── LANGUAGE ────────────────────────────────────────────────────────────
+  lang: load("lang", "id", (v) => VALID_LANGS.includes(v)),
+  setLang: (lang) => {
+    if (!VALID_LANGS.includes(lang)) return;
+    save("lang", lang);
+    set({ lang });
+  },
+
+  // ─── UI ──────────────────────────────────────────────────────────────────
   darkMode: load("darkMode", false),
   showPriceEditor: false,
 
@@ -95,7 +134,7 @@ export const useRecipeStore = create((set, get) => ({
   },
   togglePriceEditor: () => set((s) => ({ showPriceEditor: !s.showPriceEditor })),
 
-  // DERIVED
+  // ─── DERIVED ─────────────────────────────────────────────────────────────
   getCalculated: () => {
     const { recipe, portion, getEffectivePrices } = get();
     return calculateRecipeWithPrices(recipe, portion, getEffectivePrices());
