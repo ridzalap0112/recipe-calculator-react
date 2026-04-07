@@ -87,6 +87,20 @@ export const translations = {
     kompies: "Kompies",
 
 
+
+    // Timer
+    timerStart: "Start",
+    timerPause: "Pause",
+    timerReset: "Reset",
+    timerDone: "Done!",
+    timerMin: "min",
+
+    // History
+    history: "History",
+    historySub: "Your recent calculation results.",
+    historyEmpty: "No history yet. Start calculating!",
+    historyClear: "Clear All",
+
     // Cost Chart
     costBreakdown: "Cost Breakdown",
 
@@ -201,6 +215,20 @@ export const translations = {
     kompies: "Kompies",
 
 
+
+    // Timer
+    timerStart: "Start",
+    timerPause: "Pause",
+    timerReset: "Reset",
+    timerDone: "Done!",
+    timerMin: "min",
+
+    // History
+    history: "History",
+    historySub: "Your recent calculation results.",
+    historyEmpty: "No history yet. Start calculating!",
+    historyClear: "Clear All",
+
     // Cost Chart
     costBreakdown: "Cost Breakdown",
 
@@ -220,6 +248,34 @@ export const translations = {
     customNote: "Custom Note",
     printNow: "Print Now",
 
+
+
+    // Timer
+    timerStart: "Start",
+    timerPause: "Pause",
+    timerReset: "Reset",
+    timerDone: "Done!",
+    timerMin: "min",
+
+    // History
+    history: "History",
+    historySub: "Your recent calculation results.",
+    historyEmpty: "No history yet. Start calculating!",
+    historyClear: "Clear All",
+
+
+    // Timer
+    timerStart: "Mulai",
+    timerPause: "Jeda",
+    timerReset: "Ulang",
+    timerDone: "Selesai!",
+    timerMin: "menit",
+
+    // History
+    history: "Riwayat",
+    historySub: "Hasil kalkulasi terakhirmu.",
+    historyEmpty: "Belum ada riwayat. Mulai kalkulasi!",
+    historyClear: "Hapus Semua",
 
     // Cost Chart
     costBreakdown: "Rincian Biaya",

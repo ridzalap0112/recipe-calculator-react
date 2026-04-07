@@ -552,6 +552,205 @@ function RecipeNotes({ recipe, lang }) {
   );
 }
 
+// ─── STEP TIMER ──────────────────────────────────────────────────────────────
+// Detects minutes in step text e.g. "25 minutes", "25 menit", "25–30 minutes"
+function extractMinutes(text) {
+  const match = text.match(/(\d+)(?:[–-](\d+))?\s*(?:minutes?|menit)/i);
+  if (!match) return null;
+  // Use the larger number if range
+  return parseInt(match[2] || match[1], 10);
+}
+
+function StepTimer({ step, stepIndex, lang }) {
+  const mins = extractMinutes(step);
+  const totalSecs = mins ? mins * 60 : null;
+
+  const [secondsLeft, setSecondsLeft] = useState(totalSecs);
+  const [running, setRunning] = useState(false);
+  const [finished, setFinished] = useState(false);
+  const intervalRef = useRef(null);
+
+  // Reset when step changes
+  useEffect(() => {
+    setSecondsLeft(totalSecs);
+    setRunning(false);
+    setFinished(false);
+    clearInterval(intervalRef.current);
+  }, [stepIndex, totalSecs]);
+
+  useEffect(() => {
+    if (running) {
+      intervalRef.current = setInterval(() => {
+        setSecondsLeft((s) => {
+          if (s <= 1) {
+            clearInterval(intervalRef.current);
+            setRunning(false);
+            setFinished(true);
+            // Browser notification if supported
+            if (
+              "Notification" in window &&
+              Notification.permission === "granted"
+            ) {
+              new Notification("⏰ Timer selesai!", { body: step });
+            }
+            return 0;
+          }
+          return s - 1;
+        });
+      }, 1000);
+    } else {
+      clearInterval(intervalRef.current);
+    }
+    return () => clearInterval(intervalRef.current);
+  }, [running]);
+
+  if (!totalSecs) return null;
+
+  const mm = String(Math.floor(secondsLeft / 60)).padStart(2, "0");
+  const ss = String(secondsLeft % 60).padStart(2, "0");
+  const pct = ((totalSecs - secondsLeft) / totalSecs) * 100;
+
+  const handleStart = () => {
+    if ("Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission();
+    }
+    setRunning(true);
+    setFinished(false);
+  };
+
+  return (
+    <div className={`step-timer${finished ? " timer-done" : ""}`}>
+      <div className="timer-display">
+        <span className="timer-icon">
+          {finished ? "✅" : running ? "⏱️" : "⏰"}
+        </span>
+        <span className="timer-time">
+          {mm}:{ss}
+        </span>
+        <span className="timer-label">
+          {finished ? t(lang, "timerDone") : `${mins} ${t(lang, "timerMin")}`}
+        </span>
+      </div>
+      <div className="timer-bar">
+        <div className="timer-bar-fill" style={{ width: `${pct}%` }} />
+      </div>
+      <div className="timer-controls">
+        {!running && !finished && (
+          <button className="timer-btn start" onClick={handleStart}>
+            ▶ {t(lang, "timerStart")}
+          </button>
+        )}
+        {running && (
+          <button className="timer-btn pause" onClick={() => setRunning(false)}>
+            ⏸ {t(lang, "timerPause")}
+          </button>
+        )}
+        {(running || finished || secondsLeft < totalSecs) && (
+          <button
+            className="timer-btn reset"
+            onClick={() => {
+              setSecondsLeft(totalSecs);
+              setRunning(false);
+              setFinished(false);
+            }}
+          >
+            ↺ {t(lang, "timerReset")}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── HISTORY ──────────────────────────────────────────────────────────────────
+const HISTORY_KEY = "calc-history";
+const MAX_HISTORY = 20;
+
+function loadHistory() {
+  try {
+    return JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+  } catch {
+    return [];
+  }
+}
+function saveHistory(entries) {
+  try {
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(entries));
+  } catch {}
+}
+
+function HistoryModal({ onClose, lang }) {
+  const [history, setHistory] = useState(loadHistory);
+
+  const clearAll = () => {
+    saveHistory([]);
+    setHistory([]);
+  };
+
+  const deleteOne = (id) => {
+    const next = history.filter((h) => h.id !== id);
+    saveHistory(next);
+    setHistory(next);
+  };
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal history-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <span className="modal-title">🕒 {t(lang, "history")}</span>
+          <button className="modal-close" onClick={onClose}>
+            ✕
+          </button>
+        </div>
+        <p className="modal-subtitle">{t(lang, "historySub")}</p>
+
+        {history.length === 0 ? (
+          <div className="history-empty">
+            <span style={{ fontSize: 36 }}>📭</span>
+            <p>{t(lang, "historyEmpty")}</p>
+          </div>
+        ) : (
+          <>
+            <div className="history-list">
+              {history.map((h) => (
+                <div key={h.id} className="history-item">
+                  <div className="history-item-top">
+                    <span className="history-recipe">{t(lang, h.recipe)}</span>
+                    <span className="history-date">{h.date}</span>
+                    <button
+                      className="history-del"
+                      onClick={() => deleteOne(h.id)}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  <div className="history-item-stats">
+                    <span>🔢 {h.portion}x</span>
+                    <span>💰 {formatRp(h.totalCost)}</span>
+                    <span className={h.profit >= 0 ? "green" : "red"}>
+                      {h.profit >= 0 ? "+" : ""}
+                      {formatRp(h.profit)}
+                    </span>
+                    <span>{h.margin.toFixed(1)}%</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="modal-footer">
+              <button className="ctrl-btn" onClick={clearAll}>
+                🗑️ {t(lang, "historyClear")}
+              </button>
+              <button className="ctrl-btn primary" onClick={onClose}>
+                ✓ {t(lang, "done")}
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ─── PRICE EDITOR MODAL ───────────────────────────────────────────────────────
 function PriceEditor({ onClose, lang }) {
   const customPrices = useRecipeStore((s) => s.customPrices);
@@ -640,6 +839,7 @@ export default function App() {
   const getBusinessStats = useRecipeStore((s) => s.getBusinessStats);
 
   const [showLabel, setShowLabel] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
 
   const { ingredients, totalCost, totalCalories } = getCalculated();
   const businessStats = getBusinessStats();
@@ -670,6 +870,38 @@ export default function App() {
     });
   }, [activeStep]);
 
+  // Save to history whenever totalCost changes (debounced 1.5s)
+  const histTimerRef = useRef(null);
+  useEffect(() => {
+    if (totalCost === 0) return;
+    clearTimeout(histTimerRef.current);
+    histTimerRef.current = setTimeout(() => {
+      const { profit, margin } = getBusinessStats();
+      const entry = {
+        id: Date.now(),
+        date: new Date().toLocaleString(lang === "id" ? "id-ID" : "en-GB"),
+        recipe,
+        portion,
+        totalCost,
+        profit,
+        margin,
+      };
+      const prev = loadHistory();
+      // Avoid duplicate consecutive same-recipe+portion entries
+      const latest = prev[0];
+      if (
+        latest &&
+        latest.recipe === recipe &&
+        latest.portion === portion &&
+        Math.abs(latest.totalCost - totalCost) < 1
+      )
+        return;
+      const next = [entry, ...prev].slice(0, MAX_HISTORY);
+      saveHistory(next);
+    }, 1500);
+    return () => clearTimeout(histTimerRef.current);
+  }, [recipe, portion, totalCost]);
+
   return (
     <div className="app">
       {/* TOP CONTROLS */}
@@ -679,6 +911,9 @@ export default function App() {
           onClick={() => setLang(lang === "en" ? "id" : "en")}
         >
           {lang === "en" ? "🇮🇩 ID" : "🇬🇧 EN"}
+        </button>
+        <button className="history-btn" onClick={() => setShowHistory(true)}>
+          🕒 {t(lang, "history")}
         </button>
         <button className="theme-btn" onClick={toggleDarkMode}>
           {darkMode
@@ -699,6 +934,9 @@ export default function App() {
           lang={lang}
           onClose={() => setShowLabel(false)}
         />
+      )}
+      {showHistory && (
+        <HistoryModal onClose={() => setShowHistory(false)} lang={lang} />
       )}
 
       {/* HEADER */}
@@ -948,7 +1186,12 @@ export default function App() {
                         onClick={() => toggleStep(i)}
                       >
                         <div className="step-num">{isDone ? "✓" : i + 1}</div>
-                        <span>{step}</span>
+                        <div className="step-content">
+                          <span>{step}</span>
+                          {isActive && (
+                            <StepTimer step={step} stepIndex={i} lang={lang} />
+                          )}
+                        </div>
                       </li>
                     );
                   })}
