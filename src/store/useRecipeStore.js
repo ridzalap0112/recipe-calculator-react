@@ -17,8 +17,76 @@ const save = (key, val) => {
 
 const VALID_RECIPES = ["nastar", "kastengel", "putri", "sagu", "kompies"];
 const VALID_LANGS = ["en", "id"];
+const HISTORY_KEY = "history";
+const LEGACY_HISTORY_KEY = "calc-history";
+const MAX_HISTORY = 20;
+
+const isValidHistoryEntry = (entry) =>
+  entry &&
+  VALID_RECIPES.includes(entry.recipe) &&
+  typeof entry.portion === "number" &&
+  typeof entry.totalCost === "number" &&
+  typeof entry.profit === "number" &&
+  typeof entry.margin === "number";
+
+const loadHistory = () => {
+  const primary = load(
+    HISTORY_KEY,
+    null,
+    (value) => Array.isArray(value) && value.every(isValidHistoryEntry),
+  );
+  if (primary) return primary.slice(0, MAX_HISTORY);
+
+  const legacy = load(
+    LEGACY_HISTORY_KEY,
+    [],
+    (value) => Array.isArray(value) && value.every(isValidHistoryEntry),
+  ).slice(0, MAX_HISTORY);
+
+  if (legacy.length) save(HISTORY_KEY, legacy);
+  return legacy;
+};
 
 export const useRecipeStore = create((set, get) => ({
+  // ─── HISTORY ─────────────────────────────────────────────
+  history: loadHistory(),
+
+  addHistory: (entry) => {
+    if (!isValidHistoryEntry(entry)) return;
+
+    const current = get().history;
+    const deduped = current.filter(
+      (item) =>
+        !(
+          item.recipe === entry.recipe &&
+          item.portion === entry.portion &&
+          Math.abs(item.totalCost - entry.totalCost) < 1
+        ),
+    );
+
+    const updated = [
+      {
+        ...entry,
+        id: Date.now(),
+        date: new Date().toISOString(),
+      },
+      ...deduped,
+    ].slice(0, MAX_HISTORY);
+
+    save(HISTORY_KEY, updated);
+    set({ history: updated });
+  },
+
+  removeHistory: (id) => {
+    const updated = get().history.filter((entry) => entry.id !== id);
+    save(HISTORY_KEY, updated);
+    set({ history: updated });
+  },
+
+  clearHistory: () => {
+    save(HISTORY_KEY, []);
+    set({ history: [] });
+  },
 
   // ─── RECIPE & PORTION ────────────────────────────────────────────────────
   recipe: load("recipe", "nastar", (v) => VALID_RECIPES.includes(v)),

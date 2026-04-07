@@ -2,19 +2,33 @@ import { recipes, ingredientsData } from "../data";
 
 export function calculateRecipeWithPrices(recipeName, portion, effectivePrices) {
     const recipeData = recipes[recipeName];
-    if (!recipeData || portion < 1) return { ingredients: [], totalCost: 0, totalCalories: 0 };
+    if (!recipeData || portion < 1) {
+        return { ingredients: [], totalCost: 0, totalCalories: 0 };
+    }
 
     const prices = effectivePrices || ingredientsData;
 
     const ingredients = recipeData.ingredients.map((item) => {
         const totalAmount = item.amount * portion;
         const data = prices[item.name];
-        if (!data) return { name: item.name, amount: totalAmount, cost: 0, calories: 0 };
+
+        if (!data) {
+            console.warn(`Missing ingredient data for: ${item.name}`);
+            return {
+                name: item.name,
+                amount: totalAmount,
+                cost: 0,
+                calories: 0,
+                missing: true,
+            };
+        }
+
         return {
             name: item.name,
             amount: totalAmount,
             cost: totalAmount * data.pricePerGram,
             calories: totalAmount * data.caloriesPerGram,
+            missing: false,
         };
     });
 
@@ -25,7 +39,7 @@ export function calculateRecipeWithPrices(recipeName, portion, effectivePrices) 
     };
 }
 
-// Keep old export for backwards compatibility
+// backward compatibility
 export function calculateRecipe(recipeName, portion) {
     return calculateRecipeWithPrices(recipeName, portion, ingredientsData);
 }

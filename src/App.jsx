@@ -3,6 +3,7 @@ import { useRecipeStore } from "./store/useRecipeStore";
 import { recipes, ingredientsData } from "./data";
 import { recipeIcons, recipePhotos, formatRp } from "./helpers";
 import { t } from "./i18n";
+import { roundPrice } from "./helpers";
 
 // ─── COLORS for chart ────────────────────────────────────────────────────────
 const CHART_COLORS = [
@@ -322,14 +323,14 @@ function SellingPriceCalc({ totalCost, yieldAmount, setSellingPrice, lang }) {
         <div className="calc-result-item highlight">
           <span className="calc-result-label">{t(lang, "suggestedPrice")}</span>
           <span className="calc-result-val big">
-            {formatRp(Math.ceil(suggested / 100) * 100)}
+            {formatRp(roundPrice(suggested))}
           </span>
         </div>
       </div>
       <button
         className="ctrl-btn primary"
         style={{ width: "100%", marginTop: 10 }}
-        onClick={() => setSellingPrice(Math.ceil(suggested / 100) * 100)}
+        onClick={() => setSellingPrice(roundPrice(suggested))}
       >
         ✓ {t(lang, "applyPrice")}
       </button>
@@ -561,6 +562,14 @@ function extractMinutes(text) {
   return parseInt(match[2] || match[1], 10);
 }
 
+useEffect(() => {
+  return () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+  };
+}, []);
+
 function StepTimer({ step, stepIndex, lang }) {
   const mins = extractMinutes(step);
   const totalSecs = mins ? mins * 60 : null;
@@ -663,35 +672,16 @@ function StepTimer({ step, stepIndex, lang }) {
 }
 
 // ─── HISTORY ──────────────────────────────────────────────────────────────────
-const HISTORY_KEY = "calc-history";
-const MAX_HISTORY = 20;
-
-function loadHistory() {
-  try {
-    return JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
-  } catch {
-    return [];
-  }
-}
-function saveHistory(entries) {
-  try {
-    localStorage.setItem(HISTORY_KEY, JSON.stringify(entries));
-  } catch {}
+function formatHistoryDate(date, lang) {
+  const parsed = new Date(date);
+  if (Number.isNaN(parsed.getTime())) return date;
+  return parsed.toLocaleString(lang === "id" ? "id-ID" : "en-GB");
 }
 
 function HistoryModal({ onClose, lang }) {
-  const [history, setHistory] = useState(loadHistory);
-
-  const clearAll = () => {
-    saveHistory([]);
-    setHistory([]);
-  };
-
-  const deleteOne = (id) => {
-    const next = history.filter((h) => h.id !== id);
-    saveHistory(next);
-    setHistory(next);
-  };
+  const history = useRecipeStore((s) => s.history);
+  const clearHistory = useRecipeStore((s) => s.clearHistory);
+  const removeHistory = useRecipeStore((s) => s.removeHistory);
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -716,10 +706,12 @@ function HistoryModal({ onClose, lang }) {
                 <div key={h.id} className="history-item">
                   <div className="history-item-top">
                     <span className="history-recipe">{t(lang, h.recipe)}</span>
-                    <span className="history-date">{h.date}</span>
+                    <span className="history-date">
+                      {formatHistoryDate(h.date, lang)}
+                    </span>
                     <button
                       className="history-del"
-                      onClick={() => deleteOne(h.id)}
+                      onClick={() => removeHistory(h.id)}
                     >
                       ✕
                     </button>
@@ -737,7 +729,7 @@ function HistoryModal({ onClose, lang }) {
               ))}
             </div>
             <div className="modal-footer">
-              <button className="ctrl-btn" onClick={clearAll}>
+              <button className="ctrl-btn" onClick={clearHistory}>
                 🗑️ {t(lang, "historyClear")}
               </button>
               <button className="ctrl-btn primary" onClick={onClose}>
@@ -837,6 +829,7 @@ export default function App() {
   const setLang = useRecipeStore((s) => s.setLang);
   const getCalculated = useRecipeStore((s) => s.getCalculated);
   const getBusinessStats = useRecipeStore((s) => s.getBusinessStats);
+  const addHistory = useRecipeStore((s) => s.addHistory);
 
   const [showLabel, setShowLabel] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
@@ -857,7 +850,6 @@ export default function App() {
   const progress = safeSteps.length
     ? Math.round((completedSteps.length / safeSteps.length) * 100)
     : 0;
-
   const stepRefs = useRef([]);
 
   useEffect(() => {
@@ -870,37 +862,22 @@ export default function App() {
     });
   }, [activeStep]);
 
-  // Save to history whenever totalCost changes (debounced 1.5s)
   const histTimerRef = useRef(null);
   useEffect(() => {
     if (totalCost === 0) return;
     clearTimeout(histTimerRef.current);
     histTimerRef.current = setTimeout(() => {
       const { profit, margin } = getBusinessStats();
-      const entry = {
-        id: Date.now(),
-        date: new Date().toLocaleString(lang === "id" ? "id-ID" : "en-GB"),
+      addHistory({
         recipe,
         portion,
         totalCost,
         profit,
         margin,
-      };
-      const prev = loadHistory();
-      // Avoid duplicate consecutive same-recipe+portion entries
-      const latest = prev[0];
-      if (
-        latest &&
-        latest.recipe === recipe &&
-        latest.portion === portion &&
-        Math.abs(latest.totalCost - totalCost) < 1
-      )
-        return;
-      const next = [entry, ...prev].slice(0, MAX_HISTORY);
-      saveHistory(next);
+      });
     }, 1500);
     return () => clearTimeout(histTimerRef.current);
-  }, [recipe, portion, totalCost]);
+  }, [addHistory, getBusinessStats, portion, recipe, totalCost]);
 
   return (
     <div className="app">
@@ -1217,6 +1194,9 @@ export default function App() {
                       )
                     }
                   >
+                    {false && (
+                      <span style={{ color: "red" }}>⚠ Missing data</span>
+                    )}
                     {t(lang, "next")} →
                   </button>
                   <button className="ctrl-btn" onClick={resetSteps}>
@@ -1227,6 +1207,59 @@ export default function App() {
             )}
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function HistoryPanel({ lang }) {
+  const history = useRecipeStore((s) => s.history);
+  const clearHistory = useRecipeStore((s) => s.clearHistory);
+
+  if (!history.length) {
+    return (
+      <div className="card">
+        <div className="card-title">📜 {t(lang, "history")}</div>
+        <p>{t(lang, "historyEmpty")}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="card">
+      <div className="card-title">
+        📜 {t(lang, "history")}
+        <button
+          className="edit-price-btn"
+          onClick={clearHistory}
+          style={{ marginLeft: "auto" }}
+        >
+          {t(lang, "historyClear")}
+        </button>
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        {history.map((item) => (
+          <div
+            key={item.id}
+            style={{
+              padding: "10px",
+              border: "1px solid var(--border)",
+              borderRadius: "10px",
+              background: "var(--surface2)",
+            }}
+          >
+            <div style={{ fontWeight: 700 }}>{t(lang, item.recipe)}</div>
+
+            <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>
+              {formatHistoryDate(item.date, lang)}
+            </div>
+
+            <div>💰 {formatRp(item.totalCost)}</div>
+
+            <div style={{ fontSize: "12px" }}>🔢 {item.portion} batch</div>
+          </div>
+        ))}
       </div>
     </div>
   );

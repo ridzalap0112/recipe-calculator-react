@@ -54,3 +54,4 @@ export const ingredientNames = {
 
 export const formatRp = (num) =>
   `Rp ${Math.round(num).toLocaleString("id-ID")}`;
+export const roundPrice = (num) => Math.ceil(num / 100) * 100;
