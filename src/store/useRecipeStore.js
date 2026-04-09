@@ -12,7 +12,11 @@ const load = (key, fallback, validator) => {
   } catch { return fallback; }
 };
 const save = (key, val) => {
-  try { localStorage.setItem(key, JSON.stringify(val)); } catch { }
+  try {
+    localStorage.setItem(key, JSON.stringify(val));
+  } catch {
+    // Ignore storage write failures so the app keeps working in restricted modes.
+  }
 };
 
 const VALID_RECIPES = ["nastar", "kastengel", "putri", "sagu", "kompies"];

@@ -1,19 +1,11 @@
-// ─── TRANSLATIONS ─────────────────────────────────────────────────────────────
 export const translations = {
   en: {
-    // Header
     appTitle: "Recipe Calculator",
     appSubtitle: "Smart baking calculator with business insights",
-
-    // Tabs / Nav
     darkMode: "Dark",
     lightMode: "Light",
-
-    // Settings
     settings: "Settings",
     numberOfBatches: "Number of Batches",
-
-    // Ingredients
     ingredients: "Ingredients",
     ingredient: "Ingredient",
     grams: "Grams",
@@ -26,15 +18,11 @@ export const translations = {
     copied: "Copied!",
     copyClipboard: "Copy to Clipboard",
     sendWhatsApp: "Send via WhatsApp",
-
-    // Price Editor
     editIngredientPrices: "Edit Ingredient Prices",
     pricePerGram: "Price per gram (Rp). Leave blank to use default.",
     defaultPrice: "Default:",
     resetAll: "Reset All",
     done: "Done",
-
-    // Business
     businessAnalysis: "Business Analysis",
     sellingPrice: "Selling Price / pcs (Rp)",
     yieldBatch: "Yield / batch (pcs)",
@@ -42,8 +30,6 @@ export const translations = {
     totalRevenue: "Total Revenue",
     profitLoss: "Profit / Loss",
     margin: "Margin",
-
-    // Steps
     steps: "Steps",
     progress: "Progress",
     prev: "Prev",
@@ -54,14 +40,10 @@ export const translations = {
     wipSub: "Check back soon!",
     allDone: "All steps complete! Your",
     isReady: "is ready!",
-
-    // Notes
     recipeNotes: "Recipe Notes",
     notesPlaceholder: "Add your notes, tips, or modifications here...",
     notesSaved: "Saved!",
     notesHint: "Notes are saved automatically.",
-
-    // Ingredient names
     flour: "Wheat Flour",
     butter: "Butter",
     wisman: "Wisman",
@@ -78,39 +60,25 @@ export const translations = {
     coconut_milk: "Coconut Milk",
     egg_yolk: "Egg Yolk",
     sago_flour: "Sago Flour",
-
-    // Recipe labels
     nastar: "Nastar",
     kastengel: "Kastengel",
     putri: "Putri Salju",
     sagu: "Sagu Keju",
     kompies: "Kompies",
-
-
-
-    // Timer
     timerStart: "Start",
     timerPause: "Pause",
     timerReset: "Reset",
     timerDone: "Done!",
     timerMin: "min",
-
-    // History
     history: "History",
     historySub: "Your recent calculation results.",
     historyEmpty: "No history yet. Start calculating!",
     historyClear: "Clear All",
-
-    // Cost Chart
     costBreakdown: "Cost Breakdown",
-
-    // Selling Price Calculator
     targetMarginTitle: "Auto Selling Price Calculator",
     targetMarginLabel: "Target Margin",
     suggestedPrice: "Suggested Price / pcs",
     applyPrice: "Apply This Price",
-
-    // Label Print
     printLabel: "Print Label",
     printLabelSub: "Fill in details below. 6 labels will be printed per page.",
     brandName: "Brand Name",
@@ -119,8 +87,6 @@ export const translations = {
     expDays: "Expiry (days from today)",
     customNote: "Custom Note",
     printNow: "Print Now",
-
-    // Share text
     shareTitle: "Recipe Calculator",
     shareBatch: "batch",
     shareIngredients: "Ingredients",
@@ -129,19 +95,12 @@ export const translations = {
   },
 
   id: {
-    // Header
     appTitle: "Kalkulator Resep",
     appSubtitle: "Kalkulator kue pintar dengan analisis bisnis",
-
-    // Nav
     darkMode: "Gelap",
     lightMode: "Terang",
-
-    // Settings
     settings: "Pengaturan",
     numberOfBatches: "Jumlah Batch",
-
-    // Ingredients
     ingredients: "Bahan-Bahan",
     ingredient: "Bahan",
     grams: "Gram",
@@ -154,15 +113,11 @@ export const translations = {
     copied: "Tersalin!",
     copyClipboard: "Salin ke Clipboard",
     sendWhatsApp: "Kirim via WhatsApp",
-
-    // Price Editor
     editIngredientPrices: "Edit Harga Bahan",
     pricePerGram: "Harga per gram (Rp). Kosongkan untuk pakai harga default.",
     defaultPrice: "Default:",
     resetAll: "Reset Semua",
     done: "Selesai",
-
-    // Business
     businessAnalysis: "Analisis Bisnis",
     sellingPrice: "Harga Jual / pcs (Rp)",
     yieldBatch: "Hasil / batch (pcs)",
@@ -170,8 +125,6 @@ export const translations = {
     totalRevenue: "Total Pendapatan",
     profitLoss: "Laba / Rugi",
     margin: "Margin",
-
-    // Steps
     steps: "Langkah-Langkah",
     progress: "Progress",
     prev: "Sebelumnya",
@@ -182,14 +135,10 @@ export const translations = {
     wipSub: "Segera hadir!",
     allDone: "Semua langkah selesai! Kue",
     isReady: "kamu sudah siap!",
-
-    // Notes
     recipeNotes: "Catatan Resep",
     notesPlaceholder: "Tambahkan catatan, tips, atau modifikasi resep di sini...",
     notesSaved: "Tersimpan!",
     notesHint: "Catatan disimpan otomatis.",
-
-    // Ingredient names
     flour: "Tepung Terigu",
     butter: "Mentega",
     wisman: "Wisman",
@@ -206,87 +155,25 @@ export const translations = {
     coconut_milk: "Santan",
     egg_yolk: "Kuning Telur",
     sago_flour: "Tepung Sagu",
-
-    // Recipe labels
     nastar: "Nastar",
     kastengel: "Kastengel",
     putri: "Putri Salju",
     sagu: "Sagu Keju",
     kompies: "Kompies",
-
-
-
-    // Timer
-    timerStart: "Start",
-    timerPause: "Pause",
-    timerReset: "Reset",
-    timerDone: "Done!",
-    timerMin: "min",
-
-    // History
-    history: "History",
-    historySub: "Your recent calculation results.",
-    historyEmpty: "No history yet. Start calculating!",
-    historyClear: "Clear All",
-
-    // Cost Chart
-    costBreakdown: "Cost Breakdown",
-
-    // Selling Price Calculator
-    targetMarginTitle: "Auto Selling Price Calculator",
-    targetMarginLabel: "Target Margin",
-    suggestedPrice: "Suggested Price / pcs",
-    applyPrice: "Apply This Price",
-
-    // Label Print
-    printLabel: "Print Label",
-    printLabelSub: "Fill in details below. 6 labels will be printed per page.",
-    brandName: "Brand Name",
-    weightGram: "Weight (gram)",
-    phoneNum: "Phone Number",
-    expDays: "Expiry (days from today)",
-    customNote: "Custom Note",
-    printNow: "Print Now",
-
-
-
-    // Timer
-    timerStart: "Start",
-    timerPause: "Pause",
-    timerReset: "Reset",
-    timerDone: "Done!",
-    timerMin: "min",
-
-    // History
-    history: "History",
-    historySub: "Your recent calculation results.",
-    historyEmpty: "No history yet. Start calculating!",
-    historyClear: "Clear All",
-
-
-    // Timer
     timerStart: "Mulai",
     timerPause: "Jeda",
     timerReset: "Ulang",
     timerDone: "Selesai!",
     timerMin: "menit",
-
-    // History
     history: "Riwayat",
     historySub: "Hasil kalkulasi terakhirmu.",
     historyEmpty: "Belum ada riwayat. Mulai kalkulasi!",
     historyClear: "Hapus Semua",
-
-    // Cost Chart
     costBreakdown: "Rincian Biaya",
-
-    // Selling Price Calculator
     targetMarginTitle: "Kalkulator Harga Jual Otomatis",
     targetMarginLabel: "Target Margin",
     suggestedPrice: "Harga Jual Saran / pcs",
     applyPrice: "Pakai Harga Ini",
-
-    // Label Print
     printLabel: "Cetak Label",
     printLabelSub: "Isi detail di bawah. 6 label akan dicetak per halaman.",
     brandName: "Nama Brand",
@@ -295,8 +182,6 @@ export const translations = {
     expDays: "Kedaluwarsa (hari dari sekarang)",
     customNote: "Catatan Khusus",
     printNow: "Cetak Sekarang",
-
-    // Share text
     shareTitle: "Kalkulator Resep",
     shareBatch: "batch",
     shareIngredients: "Bahan-Bahan",
@@ -306,5 +191,5 @@ export const translations = {
 };
 
 export function t(lang, key) {
-  return translations[lang]?.[key] ?? translations["en"][key] ?? key;
+  return translations[lang]?.[key] ?? translations.en[key] ?? key;
 }

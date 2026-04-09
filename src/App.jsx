@@ -198,32 +198,33 @@ function CostChart({ ingredients, totalCost, lang }) {
   const r = 62;
   const rInner = 34;
 
-  let startAngle = -Math.PI / 2;
-  const slices = sorted.map((item, i) => {
-    const pct = item.cost / totalCost;
-    const angle = pct * 2 * Math.PI;
-    const end = startAngle + angle;
-    const large = angle > Math.PI ? 1 : 0;
-    const x1 = cx + r * Math.cos(startAngle);
-    const y1 = cy + r * Math.sin(startAngle);
-    const x2 = cx + r * Math.cos(end);
-    const y2 = cy + r * Math.sin(end);
-    const xi1 = cx + rInner * Math.cos(startAngle);
-    const yi1 = cy + rInner * Math.sin(startAngle);
-    const xi2 = cx + rInner * Math.cos(end);
-    const yi2 = cy + rInner * Math.sin(end);
-    const midAngle = startAngle + angle / 2;
-    const path = `M ${xi1} ${yi1} L ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2} L ${xi2} ${yi2} A ${rInner} ${rInner} 0 ${large} 0 ${xi1} ${yi1} Z`;
-    const slice = {
-      path,
-      color: CHART_COLORS[i % CHART_COLORS.length],
-      item,
-      pct,
-      midAngle,
-    };
-    startAngle = end;
-    return slice;
-  });
+  const slices = sorted.reduce(
+    (acc, item, i) => {
+      const pct = item.cost / totalCost;
+      const angle = pct * 2 * Math.PI;
+      const start = acc.startAngle;
+      const end = start + angle;
+      const large = angle > Math.PI ? 1 : 0;
+      const x1 = cx + r * Math.cos(start);
+      const y1 = cy + r * Math.sin(start);
+      const x2 = cx + r * Math.cos(end);
+      const y2 = cy + r * Math.sin(end);
+      const xi1 = cx + rInner * Math.cos(start);
+      const yi1 = cy + rInner * Math.sin(start);
+      const xi2 = cx + rInner * Math.cos(end);
+      const yi2 = cy + rInner * Math.sin(end);
+      acc.items.push({
+        path: `M ${xi1} ${yi1} L ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2} L ${xi2} ${yi2} A ${rInner} ${rInner} 0 ${large} 0 ${xi1} ${yi1} Z`,
+        color: CHART_COLORS[i % CHART_COLORS.length],
+        item,
+        pct,
+        midAngle: start + angle / 2,
+      });
+      acc.startAngle = end;
+      return acc;
+    },
+    { startAngle: -Math.PI / 2, items: [] },
+  ).items;
 
   return (
     <div className="chart-wrap">
@@ -355,15 +356,16 @@ function LabelPrint({
     expDays: "14",
     customNote: "",
   });
+  const [baseDate] = useState(() => new Date());
 
   const label = t(lang, recipe);
   const costPerItem = yieldAmount > 0 ? totalCost / yieldAmount : 0;
   const price =
     sellingPrice > 0 ? sellingPrice : Math.ceil(costPerItem / 0.6 / 100) * 100;
   const expDate = new Date(
-    Date.now() + Number(form.expDays) * 86400000,
+    baseDate.getTime() + Number(form.expDays) * 86400000,
   ).toLocaleDateString(lang === "id" ? "id-ID" : "en-GB");
-  const prodDate = new Date().toLocaleDateString(
+  const prodDate = baseDate.toLocaleDateString(
     lang === "id" ? "id-ID" : "en-GB",
   );
 
@@ -509,16 +511,12 @@ function LabelPrint({
 }
 
 // ─── RECIPE NOTES ─────────────────────────────────────────────────────────────
-function RecipeNotes({ recipe, lang }) {
+function RecipeNotes({ lang }) {
   const getNotes = useRecipeStore((s) => s.getNotes);
   const saveNotes = useRecipeStore((s) => s.saveNotes);
   const [text, setText] = useState(() => getNotes());
   const [saved, setSaved] = useState(false);
   const timerRef = useRef(null);
-  useEffect(() => {
-    setText(getNotes());
-    setSaved(false);
-  }, [recipe]);
   const handleChange = useCallback(
     (e) => {
       const val = e.target.value;
@@ -562,15 +560,7 @@ function extractMinutes(text) {
   return parseInt(match[2] || match[1], 10);
 }
 
-useEffect(() => {
-  return () => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
-  };
-}, []);
-
-function StepTimer({ step, stepIndex, lang }) {
+function StepTimer({ step, lang }) {
   const mins = extractMinutes(step);
   const totalSecs = mins ? mins * 60 : null;
 
@@ -578,14 +568,6 @@ function StepTimer({ step, stepIndex, lang }) {
   const [running, setRunning] = useState(false);
   const [finished, setFinished] = useState(false);
   const intervalRef = useRef(null);
-
-  // Reset when step changes
-  useEffect(() => {
-    setSecondsLeft(totalSecs);
-    setRunning(false);
-    setFinished(false);
-    clearInterval(intervalRef.current);
-  }, [stepIndex, totalSecs]);
 
   useEffect(() => {
     if (running) {
@@ -611,7 +593,7 @@ function StepTimer({ step, stepIndex, lang }) {
       clearInterval(intervalRef.current);
     }
     return () => clearInterval(intervalRef.current);
-  }, [running]);
+  }, [running, step]);
 
   if (!totalSecs) return null;
 
@@ -1044,7 +1026,7 @@ export default function App() {
           </div>
 
           {/* NOTES */}
-          <RecipeNotes recipe={recipe} lang={lang} />
+          <RecipeNotes key={recipe} recipe={recipe} lang={lang} />
         </div>
 
         {/* RIGHT */}
@@ -1166,7 +1148,7 @@ export default function App() {
                         <div className="step-content">
                           <span>{step}</span>
                           {isActive && (
-                            <StepTimer step={step} stepIndex={i} lang={lang} />
+                            <StepTimer key={`${lang}-${i}-${step}`} step={step} lang={lang} />
                           )}
                         </div>
                       </li>
@@ -1193,11 +1175,7 @@ export default function App() {
                         Math.min(activeStep + 1, safeSteps.length - 1),
                       )
                     }
-                  >
-                    {false && (
-                      <span style={{ color: "red" }}>⚠ Missing data</span>
-                    )}
-                    {t(lang, "next")} →
+                  >                    {t(lang, "next")} →
                   </button>
                   <button className="ctrl-btn" onClick={resetSteps}>
                     🔄 {t(lang, "reset")}
@@ -1264,3 +1242,4 @@ function HistoryPanel({ lang }) {
     </div>
   );
 }
+
