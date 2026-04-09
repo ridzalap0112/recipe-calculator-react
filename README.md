@@ -1,16 +1,59 @@
-# React + Vite
+# Recipe Calculator Web
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React + Vite web application for calculating baking recipes, ingredient costs, calories, and selling price insights.
 
-Currently, two official plugins are available:
+## Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+This application helps users scale baking recipes and estimate the business side of production, including cost, profit, and selling price suggestions.
 
-## React Compiler
+## What This App Does
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Adjusts recipe quantities based on batch size.
+- Calculates ingredient costs and total calories.
+- Helps estimate selling price and profit margin.
+- Supports editable ingredient pricing.
+- Includes recipe steps, notes, sharing, and printable labels.
+- Provides Indonesian and English language support.
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- React
+- Vite
+- Zustand
+- JavaScript
+- CSS
+
+## Scripts
+
+```bash
+npm run dev
+npm run build
+npm run preview
+npm run lint
+```
+
+## Development
+
+```bash
+npm install
+npm run dev
+```
+
+## Build
+
+```bash
+npm run build
+```
+
+Build output is generated in the `dist` folder.
+
+## Notes
+
+This folder contains the main application source for the Recipe Calculator Web project.
+
+## Author
+
+- Ridzal Ade Putera
+- Role: Frontend Developer
+- GitHub: [github.com/ridzalap0112](https://github.com/ridzalap0112)
+- Email: [ridzaladeputra@gmail.com](mailto:ridzaladeputra@gmail.com)
