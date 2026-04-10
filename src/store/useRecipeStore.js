@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { calculateRecipeWithPrices } from "../utils/calculator";
 import { recipes, ingredientsData } from "../data";
+import { packagingOptions } from "../helpers";
 
 const load = (key, fallback, validator) => {
   try {
@@ -175,16 +176,23 @@ export const useRecipeStore = create((set, get) => ({
 
   // ─── BUSINESS ────────────────────────────────────────────────────────────
   sellingPrice: load("sellingPrice", 0, (v) => typeof v === "number" && v >= 0),
-  yieldAmount: load("yieldAmount", 100, (v) => typeof v === "number" && v >= 1),
+  totalBatchWeight: load("totalBatchWeight", 1000, (v) => typeof v === "number" && v >= 1),
+  jarSize: load("jarSize", 250, (v) => Object.keys(packagingOptions).includes(String(v))),
 
   setSellingPrice: (price) => {
     const val = Number(price);
     if (isNaN(val) || val < 0 || val > 10_000_000) return;
     save("sellingPrice", val); set({ sellingPrice: val });
   },
-  setYieldAmount: (amount) => {
-    const val = Number(amount) || 1;
-    save("yieldAmount", val); set({ yieldAmount: val });
+  setTotalBatchWeight: (amount) => {
+    const val = Number(amount);
+    if (isNaN(val) || !isFinite(val) || val < 1 || val > 100000) return;
+    save("totalBatchWeight", val); set({ totalBatchWeight: val });
+  },
+  setJarSize: (size) => {
+    const val = Number(size);
+    if (!Object.keys(packagingOptions).includes(String(val))) return;
+    save("jarSize", val); set({ jarSize: val });
   },
 
   // ─── LANGUAGE ────────────────────────────────────────────────────────────
@@ -212,12 +220,30 @@ export const useRecipeStore = create((set, get) => ({
     return calculateRecipeWithPrices(recipe, portion, getEffectivePrices());
   },
   getBusinessStats: () => {
-    const { sellingPrice, yieldAmount } = get();
+    const { sellingPrice, totalBatchWeight, jarSize } = get();
     const { totalCost } = get().getCalculated();
-    const costPerItem = yieldAmount > 0 ? totalCost / yieldAmount : 0;
-    const revenue = sellingPrice * yieldAmount;
-    const profit = revenue - totalCost;
+    const packagingCost = packagingOptions[jarSize] ?? 0;
+    const jarCount = totalBatchWeight > 0 && jarSize > 0
+      ? Math.floor(totalBatchWeight / jarSize)
+      : 0;
+    const totalPackagingCost = jarCount * packagingCost;
+    const totalCostWithPackaging = totalCost + totalPackagingCost;
+    const costPerJar = jarCount > 0 ? totalCostWithPackaging / jarCount : 0;
+    const revenue = sellingPrice * jarCount;
+    const profit = revenue - totalCostWithPackaging;
     const margin = revenue > 0 ? (profit / revenue) * 100 : 0;
-    return { costPerItem, revenue, profit, margin, totalCost };
+    return {
+      jarCount,
+      packagingCost,
+      totalPackagingCost,
+      totalBatchWeight,
+      jarSize,
+      totalCost,
+      totalCostWithPackaging,
+      costPerJar,
+      revenue,
+      profit,
+      margin,
+    };
   },
 }));

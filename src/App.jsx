@@ -29,7 +29,16 @@ function exportPDF(
   businessStats,
   lang,
 ) {
-  const { costPerItem, revenue, profit, margin } = businessStats;
+  const {
+    costPerJar,
+    revenue,
+    profit,
+    margin,
+    jarCount,
+    jarSize,
+    packagingCost,
+    totalPackagingCost,
+  } = businessStats;
   const label = t(lang, recipe);
   const date = new Date().toLocaleDateString(lang === "id" ? "id-ID" : "en-GB");
   const rows = ingredients
@@ -71,7 +80,11 @@ function exportPDF(
     </tbody></table></div>
   <div class="section"><div class="section-title">📊 ${t(lang, "businessAnalysis")}</div>
     <div class="biz-grid">
-      <div class="biz-card"><div class="biz-label">${t(lang, "cogsPerPcs")}</div><div class="biz-val">${formatRp(costPerItem)}</div></div>
+      <div class="biz-card"><div class="biz-label">${t(lang, "totalJars")}</div><div class="biz-val">${jarCount} ${t(lang, "jar")}</div></div>
+      <div class="biz-card"><div class="biz-label">${t(lang, "jarSize")}</div><div class="biz-val">${jarSize}g</div></div>
+      <div class="biz-card"><div class="biz-label">${t(lang, "packagingCost")}</div><div class="biz-val">${formatRp(packagingCost)}</div></div>
+      <div class="biz-card"><div class="biz-label">${t(lang, "totalPackagingCost")}</div><div class="biz-val">${formatRp(totalPackagingCost)}</div></div>
+      <div class="biz-card"><div class="biz-label">${t(lang, "cogsPerPcs")}</div><div class="biz-val">${formatRp(costPerJar)}</div></div>
       <div class="biz-card"><div class="biz-label">${t(lang, "totalRevenue")}</div><div class="biz-val">${formatRp(revenue)}</div></div>
       <div class="biz-card"><div class="biz-label">${t(lang, "profitLoss")}</div><div class="biz-val ${profit >= 0 ? "green" : "red"}">${profit >= 0 ? "+" : ""}${formatRp(profit)}</div></div>
       <div class="biz-card"><div class="biz-label">${t(lang, "margin")}</div><div class="biz-val ${margin >= 0 ? "green" : "red"}">${margin.toFixed(1)}%</div></div>
@@ -97,7 +110,17 @@ function buildSummaryText(
   businessStats,
   lang,
 ) {
-  const { costPerItem, revenue, profit, margin } = businessStats;
+  const {
+    costPerJar,
+    revenue,
+    profit,
+    margin,
+    jarCount,
+    jarSize,
+    packagingCost,
+    totalPackagingCost,
+    totalCostWithPackaging,
+  } = businessStats;
   const label = t(lang, recipe);
   const date = new Date().toLocaleDateString(lang === "id" ? "id-ID" : "en-GB");
   const ingLines = ingredients
@@ -117,7 +140,12 @@ function buildSummaryText(
     `🔥 *${t(lang, "totalCalories")}:* ${Math.round(totalCalories).toLocaleString("id-ID")} kcal`,
     ``,
     `📊 *${t(lang, "shareBusiness")}:*`,
-    `  • ${t(lang, "cogsPerPcs")}: ${formatRp(costPerItem)}`,
+    `  • ${t(lang, "totalJars")}: ${jarCount} ${t(lang, "jar")}`,
+    `  • ${t(lang, "jarSize")}: ${jarSize}g`,
+    `  • ${t(lang, "packagingCost")}: ${formatRp(packagingCost)}`,
+    `  • ${t(lang, "totalPackagingCost")}: ${formatRp(totalPackagingCost)}`,
+    `  • ${t(lang, "cogsPerPcs")}: ${formatRp(costPerJar)}`,
+    `  • ${t(lang, "totalHpp")}: ${formatRp(totalCostWithPackaging)}`,
     `  • ${t(lang, "totalRevenue")}: ${formatRp(revenue)}`,
     `  • ${t(lang, "profitLoss")}: ${profit >= 0 ? "+" : ""}${formatRp(profit)}`,
     `  • ${t(lang, "margin")}: ${margin.toFixed(1)}%`,
@@ -293,11 +321,10 @@ function CostChart({ ingredients, totalCost, lang }) {
 }
 
 // ─── SELLING PRICE CALCULATOR ─────────────────────────────────────────────────
-function SellingPriceCalc({ totalCost, yieldAmount, setSellingPrice, lang }) {
+function SellingPriceCalc({ costPerJar, setSellingPrice, lang }) {
   const [targetMargin, setTargetMargin] = useState(40);
-  const costPerItem = yieldAmount > 0 ? totalCost / yieldAmount : 0;
   const suggested =
-    targetMargin < 100 ? costPerItem / (1 - targetMargin / 100) : 0;
+    targetMargin < 100 ? costPerJar / (1 - targetMargin / 100) : 0;
 
   return (
     <div className="calc-box">
@@ -319,7 +346,7 @@ function SellingPriceCalc({ totalCost, yieldAmount, setSellingPrice, lang }) {
       <div className="calc-result">
         <div className="calc-result-item">
           <span className="calc-result-label">{t(lang, "cogsPerPcs")}</span>
-          <span className="calc-result-val">{formatRp(costPerItem)}</span>
+          <span className="calc-result-val">{formatRp(costPerJar)}</span>
         </div>
         <div className="calc-result-item highlight">
           <span className="calc-result-label">{t(lang, "suggestedPrice")}</span>
@@ -342,15 +369,15 @@ function SellingPriceCalc({ totalCost, yieldAmount, setSellingPrice, lang }) {
 // ─── LABEL PRINT ─────────────────────────────────────────────────────────────
 function LabelPrint({
   recipe,
-  totalCost,
-  yieldAmount,
+  costPerJar,
+  jarSize,
   sellingPrice,
   lang,
   onClose,
 }) {
   const [form, setForm] = useState({
     brandName: "",
-    weight: "250",
+    weight: String(jarSize),
     phone: "",
     instagram: "",
     expDays: "14",
@@ -359,9 +386,8 @@ function LabelPrint({
   const [baseDate] = useState(() => new Date());
 
   const label = t(lang, recipe);
-  const costPerItem = yieldAmount > 0 ? totalCost / yieldAmount : 0;
   const price =
-    sellingPrice > 0 ? sellingPrice : Math.ceil(costPerItem / 0.6 / 100) * 100;
+    sellingPrice > 0 ? sellingPrice : Math.ceil(costPerJar / 0.6 / 100) * 100;
   const expDate = new Date(
     baseDate.getTime() + Number(form.expDays) * 86400000,
   ).toLocaleDateString(lang === "id" ? "id-ID" : "en-GB");
@@ -794,7 +820,8 @@ export default function App() {
   const activeStep = useRecipeStore((s) => s.activeStep);
   const completedSteps = useRecipeStore((s) => s.completedSteps);
   const sellingPrice = useRecipeStore((s) => s.sellingPrice);
-  const yieldAmount = useRecipeStore((s) => s.yieldAmount);
+  const totalBatchWeight = useRecipeStore((s) => s.totalBatchWeight);
+  const jarSize = useRecipeStore((s) => s.jarSize);
   const darkMode = useRecipeStore((s) => s.darkMode);
   const showPriceEditor = useRecipeStore((s) => s.showPriceEditor);
   const lang = useRecipeStore((s) => s.lang);
@@ -805,7 +832,8 @@ export default function App() {
   const toggleStep = useRecipeStore((s) => s.toggleStep);
   const resetSteps = useRecipeStore((s) => s.resetSteps);
   const setSellingPrice = useRecipeStore((s) => s.setSellingPrice);
-  const setYieldAmount = useRecipeStore((s) => s.setYieldAmount);
+  const setTotalBatchWeight = useRecipeStore((s) => s.setTotalBatchWeight);
+  const setJarSize = useRecipeStore((s) => s.setJarSize);
   const toggleDarkMode = useRecipeStore((s) => s.toggleDarkMode);
   const togglePriceEditor = useRecipeStore((s) => s.togglePriceEditor);
   const setLang = useRecipeStore((s) => s.setLang);
@@ -818,7 +846,16 @@ export default function App() {
 
   const { ingredients, totalCost, totalCalories } = getCalculated();
   const businessStats = getBusinessStats();
-  const { costPerItem, revenue, profit, margin } = businessStats;
+  const {
+    jarCount,
+    packagingCost,
+    totalPackagingCost,
+    totalCostWithPackaging,
+    costPerJar,
+    revenue,
+    profit,
+    margin,
+  } = businessStats;
 
   const rawSteps = recipes[recipe]?.steps;
   const safeSteps =
@@ -853,13 +890,13 @@ export default function App() {
       addHistory({
         recipe,
         portion,
-        totalCost,
+        totalCost: totalCostWithPackaging,
         profit,
         margin,
       });
     }, 1500);
     return () => clearTimeout(histTimerRef.current);
-  }, [addHistory, getBusinessStats, portion, recipe, totalCost]);
+  }, [addHistory, getBusinessStats, portion, recipe, totalCost, totalCostWithPackaging]);
 
   return (
     <div className="app">
@@ -887,8 +924,8 @@ export default function App() {
       {showLabel && (
         <LabelPrint
           recipe={recipe}
-          totalCost={totalCost}
-          yieldAmount={yieldAmount}
+          costPerJar={costPerJar}
+          jarSize={jarSize}
           sellingPrice={sellingPrice}
           lang={lang}
           onClose={() => setShowLabel(false)}
@@ -937,9 +974,9 @@ export default function App() {
             </strong>
           </div>
           <div className="hero-stat">
-            <span className="hero-stat-label">{t(lang, "yieldBatch")}</span>
+            <span className="hero-stat-label">{t(lang, "totalJars")}</span>
             <strong className="hero-stat-value">
-              {yieldAmount} {t(lang, "shareBatch")}
+              {jarCount} {t(lang, "jar")}
             </strong>
           </div>
           <div className="hero-stat">
@@ -1090,15 +1127,40 @@ export default function App() {
                 <input
                   type="number"
                   min="1"
-                  value={yieldAmount}
-                  onChange={(e) => setYieldAmount(e.target.value)}
+                  value={totalBatchWeight}
+                  onChange={(e) => setTotalBatchWeight(e.target.value)}
                 />
+              </div>
+              <div className="field">
+                <label>{t(lang, "jarSize")}</label>
+                <select
+                  value={jarSize}
+                  onChange={(e) => setJarSize(e.target.value)}
+                >
+                  <option value={250}>{t(lang, "jar250")}</option>
+                  <option value={500}>{t(lang, "jar500")}</option>
+                  <option value={1000}>{t(lang, "jar1000")}</option>
+                </select>
+              </div>
+              <div className="field">
+                <label>{t(lang, "packagingCost")}</label>
+                <input type="text" value={formatRp(packagingCost)} readOnly />
               </div>
             </div>
             <div className="biz-grid">
               <div className="biz-stat">
+                <div className="label">{t(lang, "totalJars")}</div>
+                <div className="value">
+                  {jarCount} {t(lang, "jar")}
+                </div>
+              </div>
+              <div className="biz-stat">
+                <div className="label">{t(lang, "totalPackagingCost")}</div>
+                <div className="value">{formatRp(totalPackagingCost)}</div>
+              </div>
+              <div className="biz-stat">
                 <div className="label">{t(lang, "cogsPerPcs")}</div>
-                <div className="value">{formatRp(costPerItem)}</div>
+                <div className="value">{formatRp(costPerJar)}</div>
               </div>
               <div className="biz-stat">
                 <div className="label">{t(lang, "totalRevenue")}</div>
@@ -1117,13 +1179,16 @@ export default function App() {
                   {margin.toFixed(1)}%
                 </div>
               </div>
+              <div className="biz-stat">
+                <div className="label">{t(lang, "totalHpp")}</div>
+                <div className="value">{formatRp(totalCostWithPackaging)}</div>
+              </div>
             </div>
 
             {/* SELLING PRICE CALCULATOR */}
             <div className="calc-section">
               <SellingPriceCalc
-                totalCost={totalCost}
-                yieldAmount={yieldAmount}
+                costPerJar={costPerJar}
                 setSellingPrice={setSellingPrice}
                 lang={lang}
               />
@@ -1275,4 +1340,6 @@ function HistoryPanel({ lang }) {
     </div>
   );
 }
+
+
 

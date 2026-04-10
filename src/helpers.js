@@ -25,6 +25,12 @@ export const recipePhotos = {
   kompies: kompies_img,
 };
 
+export const packagingOptions = {
+  250: 7000,
+  500: 8000,
+  1000: 13000,
+};
+
 export const recipeLabels = {
   nastar: "Nastar",
   kastengel: "Kastengel",
