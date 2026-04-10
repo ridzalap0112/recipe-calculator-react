@@ -4,33 +4,64 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#c8783a" />
-    <meta name="description" content="Smart baking calculator with ingredient cost tracking and business analysis" />
+    <meta
+      name="description"
+      content="Scale bakery recipes, calculate ingredient costs, track calories, and estimate selling prices with a clean recipe business calculator."
+    />
+    <meta
+      name="keywords"
+      content="recipe calculator, baking calculator, food cost calculator, bakery pricing, recipe scaling, profit margin calculator"
+    />
+    <meta name="author" content="Ridzal Ade Putera" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="RecipeCalc" />
+    <meta name="application-name" content="Recipe Calculator Web" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Recipe Calculator Web" />
+    <meta
+      property="og:description"
+      content="A bakery-friendly calculator for recipe scaling, ingredient costing, calories, and pricing decisions."
+    />
+    <meta
+      property="og:url"
+      content="https://ridzalap0112.github.io/recipe-calculator-react/"
+    />
+    <meta
+      property="og:image"
+      content="https://ridzalap0112.github.io/recipe-calculator-react/favicon.svg"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Recipe Calculator Web" />
+    <meta
+      name="twitter:description"
+      content="Scale recipes, calculate costs, and plan selling prices in one place."
+    />
+    <meta
+      name="twitter:image"
+      content="https://ridzalap0112.github.io/recipe-calculator-react/favicon.svg"
+    />
 
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="/manifest.json" />
+    <link rel="manifest" href="%BASE_URL%manifest.json" />
+    <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
+    <link rel="apple-touch-icon" href="%BASE_URL%favicon.svg" />
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="/icons/icon-192.png" />
-    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
-
-    <title>Recipe Calculator</title>
+    <title>Recipe Calculator Web | Cost, Calories, and Pricing</title>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
 
-    <!-- Register Service Worker -->
     <script>
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
+          const swUrl = `${import.meta.env.BASE_URL}sw.js`;
           navigator.serviceWorker
-            .register("/sw.js")
-            .then((reg) => console.log("[PWA] Service Worker registered:", reg.scope))
+            .register(swUrl)
+            .then((reg) =>
+              console.log("[PWA] Service Worker registered:", reg.scope),
+            )
             .catch((err) => console.log("[PWA] Service Worker failed:", err));
         });
       }

@@ -1100,15 +1100,116 @@ body.dark-mode .share-option.whatsapp:hover {
 
 /* ─── TOP CONTROLS ────────────────────────────────────────────────────────── */
 .top-controls {
-  position: fixed;
-  top: 16px;
-  right: 16px;
+  position: sticky;
+  top: 14px;
   z-index: 999;
+  width: fit-content;
+  margin-left: auto;
+  margin-bottom: 18px;
+  padding: 8px;
+  border: 1.5px solid rgba(238, 223, 200, 0.9);
+  border-radius: 999px;
+  background: rgba(255, 248, 242, 0.88);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-sm);
   display: flex;
   gap: 8px;
   align-items: center;
 }
 
+body.dark-mode .top-controls {
+  background: rgba(35, 24, 16, 0.88);
+  border-color: rgba(61, 46, 30, 0.95);
+}
+
+.theme-btn,
+.lang-btn,
+.history-btn {
+  min-height: 40px;
+}
+
+.step-controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.step-controls .ctrl-btn.primary {
+  grid-column: span 2;
+}
+
+.steps-card .card-title,
+.business-card .card-title,
+.ingredients-card .card-title {
+  align-items: center;
+}
+
+.steps-list {
+  margin-top: 18px;
+}
+
+.step-item {
+  border-radius: 16px;
+}
+
+.step-item.active {
+  transform: translateY(-1px) scale(1.01);
+}
+
+.action-btns {
+  align-items: stretch;
+}
+
+.export-btn,
+.share-btn,
+.label-btn {
+  min-height: 48px;
+}
+
+.biz-stat {
+  overflow: hidden;
+}
+
+.biz-stat .value {
+  line-height: 1.25;
+  word-break: break-word;
+}
+
+@media (max-width: 767px) {
+  .top-controls {
+    position: sticky;
+    top: 10px;
+    width: 100%;
+    justify-content: space-between;
+    border-radius: 18px;
+  }
+
+  .theme-btn,
+  .lang-btn,
+  .history-btn {
+    flex: 1;
+    padding-inline: 10px;
+    font-size: 12px;
+  }
+
+  .step-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .step-controls .ctrl-btn.primary {
+    grid-column: auto;
+  }
+
+  .biz-grid,
+  .hero-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    padding: 18px;
+  }
+}
 /* override theme-btn to not be fixed anymore */
 .theme-btn {
   position: static !important;

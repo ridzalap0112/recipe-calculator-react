@@ -1,36 +1,31 @@
 {
-  "name": "Recipe Calculator",
+  "name": "Recipe Calculator Web",
   "short_name": "RecipeCalc",
-  "description": "Smart baking calculator with business insights",
-  "start_url": "/",
+  "description": "Scale recipes, calculate costs, calories, and selling prices for bakery products.",
+  "start_url": "/recipe-calculator-react/",
+  "scope": "/recipe-calculator-react/",
   "display": "standalone",
   "background_color": "#fdf6ee",
   "theme_color": "#c8783a",
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/icons/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "src": "/recipe-calculator-react/favicon.svg",
+      "sizes": "48x46",
+      "type": "image/svg+xml",
+      "purpose": "any"
     }
   ],
   "categories": ["food", "utilities", "productivity"],
   "shortcuts": [
     {
       "name": "Nastar",
-      "url": "/?recipe=nastar",
+      "url": "/recipe-calculator-react/?recipe=nastar",
       "description": "Open Nastar recipe"
     },
     {
       "name": "Kastengel",
-      "url": "/?recipe=kastengel",
+      "url": "/recipe-calculator-react/?recipe=kastengel",
       "description": "Open Kastengel recipe"
     }
   ]
