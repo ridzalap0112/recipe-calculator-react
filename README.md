@@ -1,27 +1,36 @@
 # Recipe Calculator Web
 
-A React + Vite web application for calculating baking recipes, ingredient costs, calories, and selling price insights.
+Recipe Calculator Web is a React + Vite app for scaling bakery recipes, estimating production cost, tracking calories, and turning a home-baking workflow into a clearer business workflow.
 
-## Overview
+## Live Demo
 
-This application helps users scale baking recipes and estimate the business side of production, including cost, profit, and selling price suggestions.
+- Production: https://ridzalap0112.github.io/recipe-calculator-react/
 
-## What This App Does
+## Highlights
 
-- Adjusts recipe quantities based on batch size.
-- Calculates ingredient costs and total calories.
-- Helps estimate selling price and profit margin.
-- Supports editable ingredient pricing.
-- Includes recipe steps, notes, sharing, and printable labels.
-- Provides Indonesian and English language support.
+- Scale recipes by batch size instantly
+- Calculate ingredient usage, total cost, and calorie estimates
+- Analyze selling price, revenue, profit, and margin
+- Adjust ingredient prices from inside the app
+- Follow step-by-step recipe progress with timers
+- Export summaries and print product labels
+- Switch between Indonesian and English
+- Save notes and calculation history locally
 
-## Tech Stack
+## Built With
 
 - React
 - Vite
 - Zustand
 - JavaScript
 - CSS
+
+## Local Setup
+
+```bash
+npm install
+npm run dev
+```
 
 ## Scripts
 
@@ -32,43 +41,43 @@ npm run preview
 npm run lint
 ```
 
-## Development
-
-```bash
-npm install
-npm run dev
-```
-
-## Build
+## Production Build
 
 ```bash
 npm run build
 ```
 
-Build output is generated in the `dist` folder.
+Build output is generated in `dist/`.
 
-## Deploy
+## Deployment
 
-This project is configured for GitHub Pages deployment from the `master` branch using GitHub Actions.
+This project is deployed with GitHub Pages through GitHub Actions.
 
-1. Push the latest commit to GitHub.
-2. In the repository settings, open `Pages`.
-3. Set the source to `GitHub Actions`.
-4. Wait for the `Deploy to GitHub Pages` workflow to finish.
+- Branch: `master`
+- Workflow: `.github/workflows/deploy.yml`
+- Host: GitHub Pages
 
-The site will be published at:
+When new commits are pushed to `master`, the site is built and deployed automatically.
+
+## Project Structure
 
 ```text
-https://ridzalap0112.github.io/recipe-calculator-react/
+src/
+  App.jsx
+  main.jsx
+  style.css
+  data.js
+  helpers.js
+  i18n.js
+  utils/
+  store/
+public/
+.github/workflows/
 ```
-
-## Notes
-
-This folder contains the main application source for the Recipe Calculator Web project.
 
 ## Author
 
 - Ridzal Ade Putera
-- Role: Frontend Developer
-- GitHub: [github.com/ridzalap0112](https://github.com/ridzalap0112)
-- Email: [ridzaladeputra@gmail.com](mailto:ridzaladeputra@gmail.com)
+- Frontend Developer
+- GitHub: https://github.com/ridzalap0112
+- Email: ridzaladeputra@gmail.com

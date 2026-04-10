@@ -899,12 +899,58 @@ export default function App() {
       )}
 
       {/* HEADER */}
-      <div className="header">
-        <img src={recipeIcons[recipe]} alt="icon" className="header-icon" />
-        <img src={recipePhotos[recipe]} alt={recipe} className="header-photo" />
-        <div className="header-text">
-          <h1>{t(lang, "appTitle")}</h1>
-          <p>{t(lang, "appSubtitle")}</p>
+      <div className="hero-panel">
+        <div className="hero-orb hero-orb-a" />
+        <div className="hero-orb hero-orb-b" />
+        <div className="header">
+          <img src={recipeIcons[recipe]} alt="icon" className="header-icon" />
+          <img
+            src={recipePhotos[recipe]}
+            alt={recipe}
+            className="header-photo"
+          />
+          <div className="header-text">
+            <div className="hero-pills">
+              <span className="hero-pill">{t(lang, recipe)}</span>
+              <span className="hero-pill muted">
+                {portion}x {t(lang, "shareBatch")}
+              </span>
+              <span
+                className={`hero-pill ${margin >= 0 ? "profit" : "loss"}`}
+              >
+                {t(lang, "margin")} {margin.toFixed(1)}%
+              </span>
+            </div>
+            <h1>{t(lang, "appTitle")}</h1>
+            <p>{t(lang, "appSubtitle")}</p>
+          </div>
+        </div>
+        <div className="hero-stats">
+          <div className="hero-stat">
+            <span className="hero-stat-label">{t(lang, "totalCost")}</span>
+            <strong className="hero-stat-value">{formatRp(totalCost)}</strong>
+          </div>
+          <div className="hero-stat">
+            <span className="hero-stat-label">{t(lang, "totalCalories")}</span>
+            <strong className="hero-stat-value">
+              {Math.round(totalCalories).toLocaleString("id-ID")} kcal
+            </strong>
+          </div>
+          <div className="hero-stat">
+            <span className="hero-stat-label">{t(lang, "yieldBatch")}</span>
+            <strong className="hero-stat-value">
+              {yieldAmount} {t(lang, "shareBatch")}
+            </strong>
+          </div>
+          <div className="hero-stat">
+            <span className="hero-stat-label">{t(lang, "profitLoss")}</span>
+            <strong
+              className={`hero-stat-value ${profit >= 0 ? "profit" : "loss"}`}
+            >
+              {profit >= 0 ? "+" : ""}
+              {formatRp(profit)}
+            </strong>
+          </div>
         </div>
       </div>
 
@@ -927,7 +973,7 @@ export default function App() {
         {/* LEFT */}
         <div className="col-left">
           {/* SETTINGS */}
-          <div className="card">
+          <div className="card settings-card">
             <div className="card-title">⚙️ {t(lang, "settings")}</div>
             <div className="field">
               <label>{t(lang, "numberOfBatches")}</label>
@@ -941,7 +987,7 @@ export default function App() {
           </div>
 
           {/* INGREDIENTS */}
-          <div className="card">
+          <div className="card ingredients-card">
             <div className="card-title">
               🧂 {t(lang, "ingredients")}
               <span className="badge">
@@ -971,20 +1017,15 @@ export default function App() {
                 ))}
               </tbody>
             </table>
-            <div className="summary-row">
-              <span>{t(lang, "totalCost")}</span>
-              <span className="big">{formatRp(totalCost)}</span>
-            </div>
-            <div
-              className="summary-row"
-              style={{ borderTop: "none", paddingTop: 0, fontSize: 13 }}
-            >
-              <span style={{ color: "var(--text-muted)" }}>
-                {t(lang, "totalCalories")}
-              </span>
-              <span style={{ color: "var(--text-muted)", fontWeight: 700 }}>
-                {Math.round(totalCalories).toLocaleString("id-ID")} kcal
-              </span>
+            <div className="totals-panel">
+              <div className="summary-row">
+                <span>{t(lang, "totalCost")}</span>
+                <span className="big">{formatRp(totalCost)}</span>
+              </div>
+              <div className="summary-row compact">
+                <span>{t(lang, "totalCalories")}</span>
+                <span>{Math.round(totalCalories).toLocaleString("id-ID")} kcal</span>
+              </div>
             </div>
             <div className="action-btns">
               <button
@@ -1016,7 +1057,7 @@ export default function App() {
           </div>
 
           {/* COST CHART */}
-          <div className="card">
+          <div className="card business-card">
             <div className="card-title">📊 {t(lang, "costBreakdown")}</div>
             <CostChart
               ingredients={ingredients}
@@ -1034,13 +1075,7 @@ export default function App() {
           {/* BUSINESS */}
           <div className="card">
             <div className="card-title">💼 {t(lang, "businessAnalysis")}</div>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: 10,
-              }}
-            >
+            <div className="business-inputs">
               <div className="field">
                 <label>{t(lang, "sellingPrice")}</label>
                 <input
@@ -1085,7 +1120,7 @@ export default function App() {
             </div>
 
             {/* SELLING PRICE CALCULATOR */}
-            <div style={{ marginTop: 14 }}>
+            <div className="calc-section">
               <SellingPriceCalc
                 totalCost={totalCost}
                 yieldAmount={yieldAmount}
@@ -1101,15 +1136,13 @@ export default function App() {
           </div>
 
           {/* STEPS */}
-          <div className="card">
+          <div className="card steps-card">
             <div className="card-title">👩‍🍳 {t(lang, "steps")}</div>
             {safeSteps.length === 0 ? (
               <div className="wip-notice">
                 <span className="wip-icon">🚧</span>
                 <strong>{t(lang, "wipTitle")}</strong>
-                <p style={{ marginTop: 6, fontSize: 13 }}>
-                  {t(lang, "wipSub")}
-                </p>
+                <p className="wip-sub">{t(lang, "wipSub")}</p>
               </div>
             ) : (
               <>

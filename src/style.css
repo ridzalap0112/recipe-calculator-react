@@ -10,6 +10,7 @@
   --bg:           #fdf6ee;
   --surface:      #ffffff;
   --surface2:     #fff8f2;
+  --surface3:     #fff2e4;
   --border:       #eedfc8;
   --primary:      #c8783a;
   --primary-light:#faebd7;
@@ -25,7 +26,11 @@
 
 body {
   font-family: 'Nunito', sans-serif;
-  background: var(--bg);
+  background:
+    radial-gradient(circle at top left, rgba(240, 170, 101, 0.22), transparent 28%),
+    radial-gradient(circle at top right, rgba(139, 69, 19, 0.08), transparent 24%),
+    linear-gradient(180deg, rgba(255,255,255,0.35), transparent 24%),
+    var(--bg);
   color: var(--text);
   min-height: 100vh;
   transition: background 0.35s, color 0.35s;
@@ -36,6 +41,7 @@ body.dark-mode {
   --bg:           #1a1209;
   --surface:      #2a1e12;
   --surface2:     #231810;
+  --surface3:     #2f2014;
   --border:       #3d2e1e;
   --primary:      #e09050;
   --primary-light:#3d2a18;
@@ -53,6 +59,17 @@ body.dark-mode {
   margin: 0 auto;
   padding: 32px 20px 100px;
   position: relative;
+}
+
+.app::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: min(320px, 70vw);
+  height: 320px;
+  background: radial-gradient(circle, rgba(240, 170, 101, 0.22), transparent 68%);
+  pointer-events: none;
+  z-index: -1;
 }
 
 /* ─── THEME BUTTON ────────────────────────────────────────────────────────── */
@@ -85,6 +102,126 @@ body.dark-mode {
   margin-bottom: 28px;
   padding-top: 12px;
 }
+
+.hero-panel {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 28px;
+  padding: 18px;
+  border: 1.5px solid var(--border);
+  border-radius: 28px;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.72), rgba(255,248,242,0.94)),
+    var(--surface);
+  box-shadow: var(--shadow);
+}
+
+body.dark-mode .hero-panel {
+  background:
+    linear-gradient(145deg, rgba(42,30,18,0.92), rgba(35,24,16,0.98)),
+    var(--surface);
+}
+
+.hero-orb {
+  position: absolute;
+  border-radius: 999px;
+  pointer-events: none;
+  filter: blur(4px);
+  opacity: 0.8;
+}
+
+.hero-orb-a {
+  width: 160px;
+  height: 160px;
+  top: -44px;
+  right: -48px;
+  background: radial-gradient(circle, rgba(240,170,101,0.36), transparent 70%);
+}
+
+.hero-orb-b {
+  width: 120px;
+  height: 120px;
+  bottom: -30px;
+  left: -20px;
+  background: radial-gradient(circle, rgba(139,69,19,0.14), transparent 72%);
+}
+
+.hero-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.hero-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(200,120,58,0.12);
+  border: 1px solid rgba(200,120,58,0.18);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.hero-pill.muted {
+  background: var(--surface3);
+  color: var(--text-muted);
+}
+
+.hero-pill.profit {
+  background: rgba(39,174,96,0.12);
+  border-color: rgba(39,174,96,0.2);
+  color: #1f8b4d;
+}
+
+.hero-pill.loss {
+  background: rgba(231,76,60,0.12);
+  border-color: rgba(231,76,60,0.2);
+  color: #c0392b;
+}
+
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.hero-stat {
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1.5px solid var(--border);
+  background: rgba(255,255,255,0.55);
+  backdrop-filter: blur(6px);
+}
+
+body.dark-mode .hero-stat {
+  background: rgba(26,18,9,0.35);
+}
+
+.hero-stat-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.hero-stat-value {
+  display: block;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.hero-stat-value.profit { color: #1f8b4d; }
+.hero-stat-value.loss { color: #c0392b; }
 
 .header-icon {
   width: 80px;
@@ -206,6 +343,23 @@ body.dark-mode {
   transform: translateY(-1px);
 }
 
+.card::before {
+  content: "";
+  display: block;
+  width: 56px;
+  height: 3px;
+  margin-bottom: 16px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--primary), rgba(240,170,101,0.3));
+}
+
+.settings-card,
+.ingredients-card,
+.business-card,
+.steps-card {
+  position: relative;
+}
+
 .card-title {
   font-family: 'Playfair Display', serif;
   font-size: 17px;
@@ -294,6 +448,23 @@ body.dark-mode {
   color: var(--primary);
 }
 
+.totals-panel {
+  margin-top: 14px;
+  padding: 4px 0 0;
+  border-top: 1px solid rgba(0,0,0,0.03);
+}
+
+.summary-row.compact {
+  border-top: none;
+  padding-top: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.summary-row.compact span:last-child {
+  font-weight: 700;
+}
+
 /* ─── BADGE ───────────────────────────────────────────────────────────────── */
 .badge {
   display: inline-block;
@@ -312,6 +483,16 @@ body.dark-mode {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
+  margin-top: 14px;
+}
+
+.business-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.calc-section {
   margin-top: 14px;
 }
 .biz-stat {
@@ -487,6 +668,11 @@ body.dark-mode {
   font-size: 44px;
   display: block;
   margin-bottom: 10px;
+}
+
+.wip-sub {
+  margin-top: 6px;
+  font-size: 13px;
 }
 
 /* ─── SCROLLBAR ───────────────────────────────────────────────────────────── */
@@ -742,17 +928,20 @@ body.dark-mode .done-banner {
     padding: 32px 32px 80px;
   }
 
+  .hero-panel {
+    padding: 24px;
+  }
+
   .header {
     display: flex;
     align-items: center;
     text-align: left;
     gap: 24px;
-    margin-bottom: 28px;
-    padding: 24px 28px;
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-sm);
+    margin-bottom: 0;
+    padding: 8px 8px 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
   }
 
   .header-icon {
@@ -777,6 +966,10 @@ body.dark-mode .done-banner {
   .header h1 { font-size: 32px; margin-bottom: 4px; }
   .header p  { font-size: 14px; }
 
+  .hero-stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
   .recipe-tabs .tab-btn {
     min-width: unset;
     padding: 12px 16px 10px;
@@ -791,6 +984,25 @@ body.dark-mode .done-banner {
   .app {
     max-width: 600px;
     padding: 20px 14px 80px;
+  }
+
+  .hero-panel {
+    padding: 16px;
+    border-radius: 24px;
+  }
+
+  .hero-stats,
+  .business-inputs,
+  .action-btns {
+    grid-template-columns: 1fr;
+  }
+
+  .action-btns {
+    display: grid;
+  }
+
+  .hero-stat-value {
+    font-size: 16px;
   }
 }
 
