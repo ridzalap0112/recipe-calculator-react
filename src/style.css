@@ -495,6 +495,239 @@ body.dark-mode .hero-stat {
 .calc-section {
   margin-top: 14px;
 }
+
+.business-pricing-card {
+  background:
+    linear-gradient(150deg, rgba(255,248,242,0.96), rgba(255,255,255,0.98)),
+    var(--surface);
+}
+
+body.dark-mode .business-pricing-card {
+  background:
+    linear-gradient(150deg, rgba(47,32,20,0.95), rgba(42,30,18,0.98)),
+    var(--surface);
+}
+
+.mini-title {
+  margin-bottom: 10px;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+
+.jar-preset-section,
+.simulation-panel,
+.decision-panel {
+  margin-top: 14px;
+}
+
+.jar-presets {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.jar-preset {
+  display: flex;
+  min-height: 150px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  padding: 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 18px;
+  background: var(--surface2);
+  color: var(--text);
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  text-align: left;
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.jar-preset:hover,
+.jar-preset.active {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  box-shadow: 0 8px 24px rgba(200,120,58,0.16);
+  transform: translateY(-2px);
+}
+
+.jar-visual {
+  display: grid;
+  place-items: center;
+  min-height: 54px;
+}
+
+.jar-lid {
+  width: 44px;
+  height: 8px;
+  border-radius: 999px 999px 4px 4px;
+  background: var(--accent);
+}
+
+.jar-body {
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 48px;
+  margin-top: -1px;
+  border: 2px solid var(--primary);
+  border-radius: 10px 10px 16px 16px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.75), rgba(245,184,122,0.24));
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.jar-copy {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.jar-copy strong {
+  font-size: 13px;
+  color: var(--text);
+}
+
+.jar-copy small {
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.jar-copy em {
+  color: var(--text-muted);
+  font-size: 10.5px;
+  font-style: normal;
+  line-height: 1.35;
+}
+
+.decision-panel {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 18px;
+  border: 1.5px solid var(--border);
+  background: var(--surface2);
+}
+
+.decision-panel p {
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.decision-panel.success {
+  border-color: rgba(39,174,96,0.35);
+  background: linear-gradient(135deg, rgba(39,174,96,0.12), var(--surface2));
+}
+
+.decision-panel.warning {
+  border-color: rgba(243,156,18,0.35);
+  background: linear-gradient(135deg, rgba(243,156,18,0.13), var(--surface2));
+}
+
+.decision-panel.danger {
+  border-color: rgba(231,76,60,0.35);
+  background: linear-gradient(135deg, rgba(231,76,60,0.12), var(--surface2));
+}
+
+.decision-facts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: center;
+}
+
+.decision-facts span {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.55);
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+body.dark-mode .decision-facts span {
+  background: rgba(26,18,9,0.34);
+}
+
+.decision-facts strong {
+  color: var(--text);
+}
+
+.simulation-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.simulation-card {
+  position: relative;
+  display: flex;
+  min-height: 116px;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 18px;
+  background: var(--surface2);
+  color: var(--text);
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  text-align: left;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+.simulation-card:hover,
+.simulation-card.recommended {
+  border-color: var(--primary);
+  box-shadow: 0 8px 24px rgba(200,120,58,0.16);
+  transform: translateY(-2px);
+}
+
+.simulation-margin {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+
+.simulation-card strong {
+  color: var(--primary);
+  font-size: 20px;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.simulation-card small {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.recommended-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 900;
+}
 .biz-stat {
   background: var(--surface2);
   border: 1.5px solid var(--border);
@@ -1203,6 +1436,12 @@ body.dark-mode .top-controls {
 
   .biz-grid,
   .hero-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .jar-presets,
+  .simulation-grid,
+  .decision-panel {
     grid-template-columns: 1fr;
   }
 

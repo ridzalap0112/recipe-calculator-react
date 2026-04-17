@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useRecipeStore } from "./store/useRecipeStore";
 import { recipes, ingredientsData } from "./data";
-import { recipeIcons, recipePhotos, formatRp } from "./helpers";
+import { recipeIcons, recipePhotos, formatRp, packagingOptions } from "./helpers";
 import { t } from "./i18n";
 import { roundPrice } from "./helpers";
 
@@ -18,6 +18,27 @@ const CHART_COLORS = [
   "#f4a460",
   "#a0522d",
 ];
+
+const PRICE_SIMULATION_MARGINS = [30, 40, 50];
+
+function getSuggestedPrice(costPerJar, margin) {
+  if (!costPerJar || margin >= 100) return 0;
+  return roundPrice(costPerJar / (1 - margin / 100));
+}
+
+function getDecisionTone({ jarCount, sellingPrice, costPerJar, margin }) {
+  if (jarCount <= 0) return "neutral";
+  if (sellingPrice <= 0 || sellingPrice < costPerJar) return "danger";
+  if (margin < 30) return "warning";
+  return "success";
+}
+
+function getDecisionMessage(lang, tone) {
+  if (tone === "danger") return t(lang, "lossRisk");
+  if (tone === "warning") return t(lang, "lowMargin");
+  if (tone === "success") return t(lang, "healthyPrice");
+  return t(lang, "noJars");
+}
 
 // ─── PDF EXPORT ───────────────────────────────────────────────────────────────
 function exportPDF(
@@ -38,6 +59,7 @@ function exportPDF(
     jarSize,
     packagingCost,
     totalPackagingCost,
+    totalCostWithPackaging,
   } = businessStats;
   const label = t(lang, recipe);
   const date = new Date().toLocaleDateString(lang === "id" ? "id-ID" : "en-GB");
@@ -85,11 +107,18 @@ function exportPDF(
       <div class="biz-card"><div class="biz-label">${t(lang, "packagingCost")}</div><div class="biz-val">${formatRp(packagingCost)}</div></div>
       <div class="biz-card"><div class="biz-label">${t(lang, "totalPackagingCost")}</div><div class="biz-val">${formatRp(totalPackagingCost)}</div></div>
       <div class="biz-card"><div class="biz-label">${t(lang, "cogsPerPcs")}</div><div class="biz-val">${formatRp(costPerJar)}</div></div>
+      <div class="biz-card"><div class="biz-label">${t(lang, "totalHpp")}</div><div class="biz-val">${formatRp(totalCostWithPackaging)}</div></div>
       <div class="biz-card"><div class="biz-label">${t(lang, "totalRevenue")}</div><div class="biz-val">${formatRp(revenue)}</div></div>
       <div class="biz-card"><div class="biz-label">${t(lang, "profitLoss")}</div><div class="biz-val ${profit >= 0 ? "green" : "red"}">${profit >= 0 ? "+" : ""}${formatRp(profit)}</div></div>
       <div class="biz-card"><div class="biz-label">${t(lang, "margin")}</div><div class="biz-val ${margin >= 0 ? "green" : "red"}">${margin.toFixed(1)}%</div></div>
     </div></div>
-  <div class="footer">${t(lang, "shareGenerated")} 🍪</div>
+  <div class="section"><div class="section-title">?? ${t(lang, "priceSimulation")}</div>
+    <div class="biz-grid">
+      ${PRICE_SIMULATION_MARGINS.map((simMargin) => {
+        const suggested = getSuggestedPrice(costPerJar, simMargin);
+        return `<div class="biz-card"><div class="biz-label">${simMargin}% ${t(lang, "margin")}</div><div class="biz-val">${formatRp(suggested)}</div></div>`;
+      }).join("")}
+    </div></div>  <div class="footer">${t(lang, "shareGenerated")} 🍪</div>
 </body></html>`;
   const blob = new Blob([html], { type: "text/html" });
   const url = URL.createObjectURL(blob);
@@ -321,6 +350,106 @@ function CostChart({ ingredients, totalCost, lang }) {
 }
 
 // ─── SELLING PRICE CALCULATOR ─────────────────────────────────────────────────
+function JarPresetCards({ jarSize, setJarSize, lang }) {
+  const hints = {
+    250: t(lang, "jarHint250"),
+    500: t(lang, "jarHint500"),
+    1000: t(lang, "jarHint1000"),
+  };
+
+  return (
+    <div className="jar-presets">
+      {Object.entries(packagingOptions).map(([size, cost]) => {
+        const numericSize = Number(size);
+        const active = jarSize === numericSize;
+
+        return (
+          <button
+            key={size}
+            type="button"
+            className={`jar-preset${active ? " active" : ""}`}
+            onClick={() => setJarSize(numericSize)}
+          >
+            <span className="jar-visual">
+              <span className="jar-lid" />
+              <span className="jar-body">{numericSize}g</span>
+            </span>
+            <span className="jar-copy">
+              <strong>{t(lang, `jar${size}`)}</strong>
+              <small>{formatRp(cost)}</small>
+              <em>{hints[numericSize]}</em>
+            </span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function PriceSimulation({ costPerJar, setSellingPrice, lang }) {
+  return (
+    <div className="simulation-panel">
+      <div className="mini-title">{t(lang, "priceSimulation")}</div>
+      <div className="simulation-grid">
+        {PRICE_SIMULATION_MARGINS.map((margin) => {
+          const suggested = getSuggestedPrice(costPerJar, margin);
+          const profitPerJar = suggested - costPerJar;
+
+          return (
+            <button
+              key={margin}
+              type="button"
+              className={`simulation-card${margin === 40 ? " recommended" : ""}`}
+              onClick={() => setSellingPrice(suggested)}
+            >
+              {margin === 40 && (
+                <span className="recommended-badge">
+                  {t(lang, "recommended")}
+                </span>
+              )}
+              <span className="simulation-margin">{margin}%</span>
+              <strong>{formatRp(suggested)}</strong>
+              <small>
+                {t(lang, "perJarProfit")}: {formatRp(profitPerJar)}
+              </small>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function DecisionSummary({
+  jarCount,
+  totalBatchWeight,
+  jarSize,
+  sellingPrice,
+  costPerJar,
+  margin,
+  lang,
+}) {
+  const tone = getDecisionTone({ jarCount, sellingPrice, costPerJar, margin });
+  const leftover = Math.max(totalBatchWeight - jarCount * jarSize, 0);
+
+  return (
+    <div className={`decision-panel ${tone}`}>
+      <div>
+        <div className="mini-title">{t(lang, "decisionSummary")}</div>
+        <p>{getDecisionMessage(lang, tone)}</p>
+      </div>
+      <div className="decision-facts">
+        <span>
+          {t(lang, "jarRemainder")}: {" "}
+          <strong>{leftover.toLocaleString("id-ID")}g</strong>
+        </span>
+        <span>
+          {t(lang, "margin")}: <strong>{margin.toFixed(1)}%</strong>
+        </span>
+      </div>
+    </div>
+  );
+}
 function SellingPriceCalc({ costPerJar, setSellingPrice, lang }) {
   const [targetMargin, setTargetMargin] = useState(40);
   const suggested =
@@ -1110,7 +1239,7 @@ export default function App() {
         {/* RIGHT */}
         <div className="col-right">
           {/* BUSINESS */}
-          <div className="card">
+          <div className="card business-pricing-card">
             <div className="card-title">💼 {t(lang, "businessAnalysis")}</div>
             <div className="business-inputs">
               <div className="field">
@@ -1132,21 +1261,27 @@ export default function App() {
                 />
               </div>
               <div className="field">
-                <label>{t(lang, "jarSize")}</label>
-                <select
-                  value={jarSize}
-                  onChange={(e) => setJarSize(e.target.value)}
-                >
-                  <option value={250}>{t(lang, "jar250")}</option>
-                  <option value={500}>{t(lang, "jar500")}</option>
-                  <option value={1000}>{t(lang, "jar1000")}</option>
-                </select>
-              </div>
-              <div className="field">
                 <label>{t(lang, "packagingCost")}</label>
                 <input type="text" value={formatRp(packagingCost)} readOnly />
               </div>
             </div>
+            <div className="jar-preset-section">
+              <div className="mini-title">{t(lang, "chooseJarPreset")}</div>
+              <JarPresetCards
+                jarSize={jarSize}
+                setJarSize={setJarSize}
+                lang={lang}
+              />
+            </div>
+            <DecisionSummary
+              jarCount={jarCount}
+              totalBatchWeight={totalBatchWeight}
+              jarSize={jarSize}
+              sellingPrice={sellingPrice}
+              costPerJar={costPerJar}
+              margin={margin}
+              lang={lang}
+            />
             <div className="biz-grid">
               <div className="biz-stat">
                 <div className="label">{t(lang, "totalJars")}</div>
@@ -1193,6 +1328,11 @@ export default function App() {
                 lang={lang}
               />
             </div>
+            <PriceSimulation
+              costPerJar={costPerJar}
+              setSellingPrice={setSellingPrice}
+              lang={lang}
+            />
 
             {/* PRINT LABEL BUTTON */}
             <button className="label-btn" onClick={() => setShowLabel(true)}>
@@ -1340,6 +1480,9 @@ function HistoryPanel({ lang }) {
     </div>
   );
 }
+
+
+
 
 
 
