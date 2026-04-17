@@ -387,9 +387,42 @@ function JarPresetCards({ jarSize, setJarSize, lang }) {
 }
 
 function PriceSimulation({ costPerJar, setSellingPrice, lang }) {
+  const [customMargin, setCustomMargin] = useState(35);
+  const safeCustomMargin = Math.min(Math.max(Number(customMargin) || 0, 1), 90);
+  const customSuggested = getSuggestedPrice(costPerJar, safeCustomMargin);
+  const customProfitPerJar = customSuggested - costPerJar;
+
   return (
     <div className="simulation-panel">
       <div className="mini-title">{t(lang, "priceSimulation")}</div>
+      <div className="custom-simulation">
+        <div className="custom-simulation-input">
+          <label htmlFor="custom-margin">{t(lang, "customMargin")}</label>
+          <div className="custom-margin-control">
+            <input
+              id="custom-margin"
+              type="number"
+              min="1"
+              max="90"
+              value={customMargin}
+              onChange={(e) => setCustomMargin(e.target.value)}
+            />
+            <span>%</span>
+          </div>
+        </div>
+        <button
+          type="button"
+          className="custom-simulation-result"
+          onClick={() => setSellingPrice(customSuggested)}
+        >
+          <span>{t(lang, "customSimulation")}</span>
+          <strong>{formatRp(customSuggested)}</strong>
+          <small>
+            {t(lang, "perJarProfit")}: {formatRp(customProfitPerJar)}
+          </small>
+          <em>{t(lang, "useCustomPrice")}</em>
+        </button>
+      </div>
       <div className="simulation-grid">
         {PRICE_SIMULATION_MARGINS.map((margin) => {
           const suggested = getSuggestedPrice(costPerJar, margin);

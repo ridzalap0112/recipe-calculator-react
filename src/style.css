@@ -671,6 +671,109 @@ body.dark-mode .decision-facts span {
   gap: 10px;
 }
 
+.custom-simulation {
+  display: grid;
+  grid-template-columns: 0.85fr 1.4fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.custom-simulation-input,
+.custom-simulation-result {
+  border: 1.5px solid var(--border);
+  border-radius: 18px;
+  background: var(--surface2);
+  padding: 14px;
+}
+
+.custom-simulation-input label {
+  display: block;
+  margin-bottom: 9px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+
+.custom-margin-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.custom-margin-control input {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+  font-family: 'Nunito', sans-serif;
+  font-size: 18px;
+  font-weight: 900;
+  outline: none;
+}
+
+.custom-margin-control input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(200,120,58,0.15);
+}
+
+.custom-margin-control span {
+  color: var(--primary);
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.custom-simulation-result {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  border-color: rgba(200,120,58,0.45);
+  background:
+    linear-gradient(135deg, rgba(200,120,58,0.14), transparent),
+    var(--surface2);
+  color: var(--text);
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  text-align: left;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.custom-simulation-result:hover {
+  box-shadow: 0 8px 24px rgba(200,120,58,0.18);
+  transform: translateY(-2px);
+}
+
+.custom-simulation-result span {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+
+.custom-simulation-result strong {
+  color: var(--primary);
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.custom-simulation-result small {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.custom-simulation-result em {
+  color: var(--accent);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 900;
+}
+
 .simulation-card {
   position: relative;
   display: flex;
@@ -1441,6 +1544,7 @@ body.dark-mode .top-controls {
 
   .jar-presets,
   .simulation-grid,
+  .custom-simulation,
   .decision-panel {
     grid-template-columns: 1fr;
   }
